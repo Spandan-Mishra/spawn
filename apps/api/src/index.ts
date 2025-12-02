@@ -1,6 +1,7 @@
 import express from "express";
 import { prisma } from "@repo/db";
 import { BASE_TEMPLATE } from "./base-template";
+import createSandbox from "./services/sandbox";
 
 const app = express();
 app.use(express.json());
@@ -27,6 +28,30 @@ app.post("/project", async (req, res) => {
 
         res.json({ projectId: project.id });
     })
+})
+
+app.post("/project/:projectId/startSandbox", async (req, res) => {
+    const { projectId } = req.params;
+    
+    const publicUrl = await createSandbox({ projectId });
+    
+    res.json({ publicUrl });
+})
+
+app.get("/project/:projectId/files", async (req, res) => {
+    const { projectId } = req.params;
+
+    const files = await prisma.file.findMany({
+        where: {
+            projectId
+        },
+        select: {
+            path: true,
+            content: true
+        }
+    })
+
+    res.json({ files });
 })
 
 app.listen(3001, () => {
