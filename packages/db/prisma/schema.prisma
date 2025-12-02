@@ -12,3 +12,53 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id        String    @id @default(uuid())
+  username  String    @unique
+  password  String
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Project {
+  id      String   @id @default(uuid())
+  description String
+  files   File[]
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String
+  conversation  Message[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id      String   @id @default(uuid())
+  role    Role
+  messageType MessageType
+  content String
+  project  Project  @relation(fields: [projectId], references: [id])
+  projectId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model File {
+  id        String   @id @default(uuid())
+  path      String
+  content   String
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String
+  @@unique([path, projectId])
+}
+
+enum Role {
+  USER
+  ASSISTANT
+}
+
+enum MessageType {
+  TEXT_MESSAGE
+  TOOL_CALL
+}
