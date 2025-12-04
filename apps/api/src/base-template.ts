@@ -1,169 +1,205 @@
 export const BASE_TEMPLATE = {
   "package.json": JSON.stringify({
     "name": "spawn-project",
-    "version": "0.1.0",
     "private": true,
+    "version": "0.0.0",
+    "type": "module",
     "scripts": {
-      "dev": "next dev",
-      "build": "next build",
-      "start": "next start",
-      "lint": "next lint"
+      "dev": "vite",
+      "build": "tsc && vite build",
+      "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+      "preview": "vite preview"
     },
     "dependencies": {
-      "next": "14.2.16",
-      "react": "^18",
-      "react-dom": "^18",
-      "lucide-react": "^0.454.0",
-      "clsx": "^2.1.1",           
-      "tailwind-merge": "^2.5.4"  
+      "react": "^18.3.1",
+      "react-dom": "^18.3.1",
+      "lucide-react": "^0.344.0",
+      "clsx": "^2.1.1",
+      "tailwind-merge": "^2.5.2",
+      "class-variance-authority": "^0.7.0" 
     },
     "devDependencies": {
-      "@types/node": "^20",
-      "@types/react": "^18",
-      "@types/react-dom": "^18",
-      "typescript": "^5",
-      "postcss": "^8",
-      "tailwindcss": "^3.4.1",
-      "eslint": "^8",
-      "eslint-config-next": "14.2.16"
+      "@types/react": "^18.3.3",
+      "@types/react-dom": "^18.3.0",
+      "@vitejs/plugin-react": "^4.3.1",
+      "typescript": "^5.5.3",
+      "vite": "^5.4.1",
+      "tailwindcss": "^4.0.0-alpha.25", 
+      "@tailwindcss/vite": "^4.0.0-alpha.25",
+      "eslint": "^9.9.0",
+      "globals": "^15.9.0",
+      "@types/node": "^20.0.0" 
     }
   }, null, 2),
 
   "tsconfig.json": JSON.stringify({
     "compilerOptions": {
-      "lib": ["dom", "dom.iterable", "esnext"],
-      "allowJs": true,
+      "target": "ES2020",
+      "useDefineForClassFields": true,
+      "lib": ["ES2020", "DOM", "DOM.Iterable"],
+      "module": "ESNext",
       "skipLibCheck": true,
-      "strict": true,
-      "noEmit": true,
-      "esModuleInterop": true,
-      "module": "esnext",
       "moduleResolution": "bundler",
+      "allowImportingTsExtensions": true,
       "resolveJsonModule": true,
       "isolatedModules": true,
-      "jsx": "preserve",
-      "incremental": true,
-      "plugins": [
-        {
-          "name": "next"
-        }
-      ],
+      "noEmit": true,
+      "jsx": "react-jsx",
+      "strict": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true,
+      "baseUrl": ".",
       "paths": {
-        "@/*": ["./*"]
+        "@/*": ["./src/*"]
       }
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-    "exclude": ["node_modules"]
+    "include": ["src"],
+    "references": [{ "path": "./tsconfig.node.json" }]
   }, null, 2),
 
-  "next.config.js": `
-    const nextConfig = {};
-
-    module.exports = nextConfig;
-  `,
-
-  "tailwind.config.ts": `
-    import type { Config } from "tailwindcss";
-
-    const config: Config = {
-    content: [
-        "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-        "./components/**/*.{js,ts,jsx,tsx,mdx}",
-        "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    ],
-    theme: {
-        extend: {
-            backgroundImage: {
-                "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-                "gradient-conic":
-                "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-            },
-        },
+  "tsconfig.node.json": JSON.stringify({
+    "compilerOptions": {
+      "composite": true,
+      "skipLibCheck": true,
+      "module": "ESNext",
+      "moduleResolution": "bundler",
+      "allowSyntheticDefaultImports": true
     },
-    plugins: [],
-  };
-    export default config;
-  `,
+    "include": ["vite.config.ts"]
+  }, null, 2),
 
-  "postcss.config.js": `
-    module.exports = {
-        plugins: {
-        tailwindcss: {},
-        autoprefixer: {},
+  "vite.config.ts": `
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import path from "path"
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(), // The new v4 plugin
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
     },
-  };
-  `,
+  },
+  server: {
+    allowedHosts: true,  
+  }
+})
+  `.trim(),
 
-  "app/globals.css": `
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+  "index.html": `
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spawn Project</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+  `.trim(),
+
+  "src/main.tsx": `
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+  `.trim(),
+
+  "src/lib/utils.ts": `
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+  `.trim(),
+
+  "src/index.css": `
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+}
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 10% 3.9%;
+  --radius: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
 }
+  `.trim(),
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+  "src/App.tsx": `
+import { useState } from 'react'
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-  `,
-
-  "app/layout.tsx": `
-import type { Metadata } from "next";
-import "./globals.css";
-
-export const metadata: Metadata = {
-  title: "Spawn Project",
-  description: "Generated by Spawn",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function App() {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  );
-}
-  `,
-
-  "app/page.tsx": `
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <h1 className="text-4xl font-bold mb-4">Spawn Project Initialized</h1>
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Ready for your first prompt.
+    <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
+      <div className="w-full max-w-md p-8 space-y-4 border rounded-xl shadow-lg bg-card">
+        <h1 className="text-2xl font-bold text-center">Spawn Sandbox</h1>
+        <p className="text-center text-muted-foreground">
+          Vite + React + Tailwind v4 + Shadcn UI
         </p>
+        
+        <div className="p-4 rounded-md bg-secondary text-secondary-foreground text-center">
+          Ready for AI generation.
+        </div>
       </div>
-    </main>
-  );
+    </div>
+  )
 }
-  `
+  `.trim()
 };

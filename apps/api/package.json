@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@e2b/code-interpreter": "^2.3.1",
     "@repo/db": "workspace:*",
+    "@e2b/code-interpreter": "^2.3.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^22.15.3",
