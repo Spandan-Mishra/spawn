@@ -3,9 +3,11 @@ import "dotenv/config";
 import { db, projects, files, eq, users } from "@repo/db";
 import { BASE_TEMPLATE } from "./base-template";
 import createSandbox from "./services/sandbox";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.post("/signup", async (req, res) => {
     try {
@@ -46,8 +48,11 @@ app.post("/project", async (req, res) => {
 
 app.post("/project/:projectId/startSandbox", async (req, res) => {
     const { projectId } = req.params;
+    console.log("ProjectID", projectId);
     
     const publicUrl = await createSandbox({ projectId });
+
+    console.log("Public URL xxxxxxxxxxxxxxxxxxxxx:", publicUrl);
     
     res.json({ publicUrl });
 })

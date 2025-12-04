@@ -1,11 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { File, getFiles, startSandbox } from "../../../lib/api";
 import { Editor } from "@monaco-editor/react";
 import { FileExplorer } from "@/components/ui/file-explorer";
 
-export default function Page({ params }: { params: { id: string } }) {
+type Params = { id: string };
+
+export default function Page({ params }: { params: Promise<Params> }) {
+    const { id } = use(params);
+    console.log("Hello from paramjeet", id);
     const [files, setFiles] = useState<File[]>([]);
     const [sandboxUrl, setSandboxUrl] = useState<string>("");
     const [isBooting, setIsBooting] = useState(true);
@@ -16,9 +20,11 @@ export default function Page({ params }: { params: { id: string } }) {
         const fetch = async () => {
             try {
                 const [filesData, sandboxData] = await Promise.all([
-                    getFiles({ projectId: params.id }),
-                    startSandbox({ projectId: params.id })
+                    getFiles({ projectId: id }),
+                    startSandbox({ projectId: id })
                 ]);
+
+                console.log("Sandbox Data:", sandboxData);
 
                 setFiles(filesData);
                 setSandboxUrl(sandboxData);
@@ -27,7 +33,9 @@ export default function Page({ params }: { params: { id: string } }) {
                 console.error("Failed to load the project:", error);
             }
         }
-    })
+
+        fetch();
+    }, [id]);
 
     const handleFileSelect = (filePath: string) => {
         const file = files.find(f => f.path === filePath);
@@ -35,6 +43,8 @@ export default function Page({ params }: { params: { id: string } }) {
             setSelectedFile(filePath);
         }
     }
+
+    console.log("SANDBOX URL XXXXXXXXXXXXXXXXX", sandboxUrl);
 
     return (
         <div className="h-screen w-full flex">
@@ -48,7 +58,7 @@ export default function Page({ params }: { params: { id: string } }) {
                             <p>Booting Sandbox...</p>
                         </div>
                     ) : (
-                        <iframe src={sandboxUrl} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms" />
+                        <iframe src={`https://${sandboxUrl}`} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms" />
                     )
                 ) : (
                     <div className="flex h-full">
