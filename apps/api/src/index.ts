@@ -44,7 +44,7 @@ app.post("/project", async (req, res) => {
     })
 })
 
-app.get("/project/:projectId/startSandbox", async (req, res) => {
+app.post("/project/:projectId/startSandbox", async (req, res) => {
     const { projectId } = req.params;
     
     const publicUrl = await createSandbox({ projectId });
@@ -55,7 +55,7 @@ app.get("/project/:projectId/startSandbox", async (req, res) => {
 app.get("/project/:projectId/files", async (req, res) => {
     const { projectId } = req.params;
 
-    const [filesToDisplay] = await db.select({
+    const filesToDisplay = await db.select({
         path: files.path,
         content: files.content
     }).from(files).where(eq(files.projectId, projectId));
