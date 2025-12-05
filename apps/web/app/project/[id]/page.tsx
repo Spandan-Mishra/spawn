@@ -13,7 +13,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
     const [files, setFiles] = useState<File[]>([]);
     const [sandboxUrl, setSandboxUrl] = useState<string>("");
     const [isBooting, setIsBooting] = useState(true);
-    const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
+    const [activeTab, setActiveTab] = useState<'preview' | 'code'>('code');
     const [selectedFile, setSelectedFile] = useState<string>("src/App.tsx");
 
     useEffect(() => {
@@ -44,6 +44,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
         }
     }
 
+    console.log("FILES IN PAGE TSX", files);
     console.log("SANDBOX URL XXXXXXXXXXXXXXXXX", sandboxUrl);
 
     return (

@@ -42,7 +42,7 @@ app.post("/project", async (req, res) => {
 
         await tx.insert(files).values(fileRows);
 
-        res.json({ projectId: project.id });
+        res.send({ projectId: project.id });
     })
 })
 
@@ -54,7 +54,7 @@ app.post("/project/:projectId/startSandbox", async (req, res) => {
 
     console.log("Public URL xxxxxxxxxxxxxxxxxxxxx:", publicUrl);
     
-    res.json({ publicUrl });
+    res.json(publicUrl);
 })
 
 app.get("/project/:projectId/files", async (req, res) => {
@@ -65,7 +65,7 @@ app.get("/project/:projectId/files", async (req, res) => {
         content: files.content
     }).from(files).where(eq(files.projectId, projectId));
 
-    res.json({ files: filesToDisplay});
+    res.json(filesToDisplay);
 })
 
 app.listen(3001, () => {

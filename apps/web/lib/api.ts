@@ -15,7 +15,7 @@ const getFiles = async ({ projectId } : { projectId: string }): Promise<File[]> 
 const startSandbox = async ({ projectId }: { projectId: string }): Promise<string> => {
     const response = await axios.post(`http://localhost:3001/project/${projectId}/startSandbox`);
     console.log("Response from startSandbox API:", response.data);
-    return response.data.publicUrl;
+    return response.data;
 }
 
 const createProject = async ({ prompt, userId }: { prompt: string, userId: string }) => {
