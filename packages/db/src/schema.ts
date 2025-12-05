@@ -16,6 +16,7 @@ export const users = pgTable("users", {
 export const projects = pgTable("projects", {
     id: uuid("id").defaultRandom().primaryKey(),
     description: text("description"),
+    sandboxId: uuid("sandbox_id"),
     userId: uuid("user_id")
         .references(() => users.id)
         .notNull(),
