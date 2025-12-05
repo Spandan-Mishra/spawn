@@ -62,9 +62,19 @@ export default function Page({ params }: { params: Promise<Params> }) {
                         <iframe src={`https://${sandboxUrl}`} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms" />
                     )
                 ) : (
-                    <div className="flex h-full">
-                        <FileExplorer files={files} onFileSelect={handleFileSelect} />
-                        <Editor height="90vh" defaultLanguage="typescript" theme="vs-dark" value={files.find(f => f.path === selectedFile)?.content || ""} options={{ readOnly: true }} />
+                    <div className="grid grid-cols-5 h-full">
+                        <div className="col-span-1 h-full border-r overflow-auto">
+                            <FileExplorer files={files} onFileSelect={handleFileSelect} />
+                        </div>
+                        <div className="col-span-4 h-full">
+                            <Editor
+                                height="100%"
+                                defaultLanguage="typescript"
+                                theme="vs-dark"
+                                value={files.find(f => f.path === selectedFile)?.content || ""}
+                                options={{ readOnly: true }}
+                            />
+                        </div>
                     </div>
                 )}
             </div>
