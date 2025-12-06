@@ -42,7 +42,7 @@ export const getOnChainTools = async ({ projectId }: { projectId: string }) => {
                 
                 console.log(`Content of the file at path ${path}:`, result[0].content);
 
-                return result.length > 0 ? result[0].content : "Error: File not found";
+                return result[0].content ?? "";
             },
             {
                 name: "read_file",
@@ -74,6 +74,12 @@ export const getOnChainTools = async ({ projectId }: { projectId: string }) => {
                 try {
                     if (project?.sandboxId) {
                         const sandbox = await Sandbox.connect(project.sandboxId);
+
+                        const dir = path.split('/').slice(0, -1).join('/');
+                        if (dir && dir !== ".") {
+                            await sandbox.files.makeDir(dir);
+                        }
+
                         await sandbox.files.write(path, content);
                     }
 

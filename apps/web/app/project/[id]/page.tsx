@@ -49,6 +49,10 @@ export default function Page({ params }: { params: Promise<Params> }) {
                 Conversation Area
             </div>
             <div className="w-3/4">
+                <div className="absolute bottom-0 z-10">
+                    <button className={`px-4 py-2 ${activeTab === 'preview' ? 'bg-gray-300' : ''}`} onClick={() => setActiveTab('preview')}>Preview</button>
+                    <button className={`px-4 py-2 ${activeTab === 'code' ? 'bg-gray-300' : ''}`} onClick={() => setActiveTab('code')}>Code</button>
+                </div>
                 {activeTab === 'preview' ? (
                     isBooting ? (
                         <div className="w-full flex justify-center items-center">
