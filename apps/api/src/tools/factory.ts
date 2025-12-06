@@ -12,14 +12,9 @@ export const getOnChainTools = async ({ projectId }: { projectId: string }) => {
                     path: files.path,
                 })
                 .from(files)
-                .where(
-                    and(
-                        eq(files.projectId, projectId)
-                    )
-                )
+                .where(eq(files.projectId, projectId))
                 
-
-                return result.map(f => f.path);
+                return result.map(f => f.path).join("\n");
             },
             {
                 name: "list_files",
@@ -44,8 +39,10 @@ export const getOnChainTools = async ({ projectId }: { projectId: string }) => {
                 if (result.length === 0) {
                     return `Error: File not found at path ${path}`;
                 }
+                
+                console.log(`Content of the file at path ${path}:`, result[0].content);
 
-                return result[0].content;
+                return result.length > 0 ? result[0].content : "Error: File not found";
             },
             {
                 name: "read_file",
@@ -72,30 +69,19 @@ export const getOnChainTools = async ({ projectId }: { projectId: string }) => {
                     }
                 })
 
-                const sandboxId = await db
-                .select({
-                    sandboxId: projects.sandboxId
-                })
-                .from(projects)
-                .where(
-                    eq(projects.projectId, projectId)
-                )
-                .then(res => res[0]?.sandboxId);
+                const [project] = await db.select().from(projects).where(eq(projects.id, projectId));
 
-
-                if (sandboxId) {
-                    try {
-                        const sandbox = await Sandbox.connect(sandboxId);
+                try {
+                    if (project?.sandboxId) {
+                        const sandbox = await Sandbox.connect(project.sandboxId);
                         await sandbox.files.write(path, content);
-                        
-                        return `File ${path} saved and sandbox updated`;
-                    } catch (error) {
-                        console.error("Error connecting and updating sandbox", error);
-                        return `File ${path} saved to database (Sandbox was inactive)`
                     }
-                }
 
-                return `File ${path} saved to database`
+                    return `File ${path} saved to database`
+                } catch (error) {
+                    console.error(`Error writing to file ${path}:`, error);
+                    return `File ${path} saved to database, but failed to write to sandbox`;
+                }
  
             },
             {

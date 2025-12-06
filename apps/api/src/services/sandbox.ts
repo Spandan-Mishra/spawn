@@ -8,34 +8,53 @@ const createSandbox = async ({
     projectId: string
 }) => {
     let sandbox: Sandbox | null = null;
-
+    let isNewSandbox = false;
+    
+    console.log("This operation is failing before fetching project");
     const [project] = await db.select().from(projects).where(eq(projects.id, projectId));
+    console.log("I am failing after fetching project");
+    if (!project) {
+        throw new Error("Project not found in database");
+    }
 
     if (project.sandboxId) {
         try {
             sandbox = await Sandbox.connect(project.sandboxId);
-            console.log(`Connected to existing sandbox with ID: ${project.sandboxId}`);
+            console.log("Connected to existing sandbox:", project.sandboxId);
         } catch (error) {
-            console.error(`Failed to connect to existing sandbox with ID: ${project.sandboxId}. Error:`, error);
+            console.error("Failed to connect to existing sandbox, creating a new one:", error);
+            sandbox = null;
         }
     }
 
     if (!sandbox) {
-        const filesToWrite = await db.select().from(files).where(eq(files.projectId, projectId));
+        isNewSandbox = true;
 
-        sandbox = await Sandbox.create({ apiKey: process.env.E2B_API_KEY! });
+        sandbox = await Sandbox.create({
+            apiKey: process.env.E2B_API_KEY!,
+        })
 
         await db.update(projects).set({ sandboxId: sandbox.sandboxId }).where(eq(projects.id, projectId));
+    }
+
+    if (isNewSandbox && sandbox) {
+        const filesToWrite = await db.select().from(files).where(eq(files.projectId, projectId));
 
         await Promise.all(filesToWrite.map(async (file) => {
-            if (file.content) {
-                await sandbox!.files.write(file.path, file.content);
+            const dir = file.path.split("/").slice(0, -1).join("/");
+
+            if (dir && dir !== ".") {
+                await sandbox!.files.makeDir(dir);
             }
+
+            await sandbox!.files.write(file.path, file.content);
         }))
 
         await sandbox.commands.run("npm install");
 
-        await sandbox.commands.run("npm run dev", { background: true });
+        await sandbox.commands.run("npm run dev", { background: true});
+    } else {
+        await sandbox.commands.run("npm run dev", { background: true});
     }
 
     return sandbox.getHost(5173);

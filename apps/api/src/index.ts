@@ -1,9 +1,13 @@
 import express from "express";
 import "dotenv/config";
-import { db, projects, files, eq, users } from "@repo/db";
+import { db, projects, files, eq, users, messages } from "@repo/db";
 import { BASE_TEMPLATE } from "./base-template";
 import createSandbox from "./services/sandbox";
 import cors from "cors";
+import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { SYSTEM_PROMPT } from "./ai/prompt";
+import createAgentGraph from "./ai/graph";
+import { model } from "./ai/model";
 
 const app = express();
 app.use(express.json());
@@ -66,6 +70,79 @@ app.get("/project/:projectId/files", async (req, res) => {
     }).from(files).where(eq(files.projectId, projectId));
 
     res.json(filesToDisplay);
+})
+
+app.post("/project/:projectId/chat", async (req, res) => {
+    const { projectId } = req.params;
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    const { message } = req.body;
+
+    try {
+        const project = await db.select().from(projects).where(eq(projects.id, projectId)).then(r => r[0]);
+
+        const fileStructure = await db.select({ path: files.path }).from(files).where(eq(files.projectId, projectId)).then(rows => rows.map(r => r.path));
+
+        const messagesForProject = await db.select().from(messages).where(eq(messages.projectId, projectId));
+        const langchainMessages = messagesForProject.map((m) => (
+            m.role === "user" ? new HumanMessage(m.content) : new AIMessage(m.content)
+        ))
+
+        const systemMessage = new SystemMessage(SYSTEM_PROMPT(fileStructure) + project.description);
+
+        const graphInput = {
+            messages: [
+                systemMessage,
+                ...langchainMessages,
+                new HumanMessage(message)
+            ],
+        };
+
+        const graph = await createAgentGraph({ projectId, model });
+
+        const stream = await graph.streamEvents(graphInput, {
+            version: "v2",
+        });
+
+        let finalResponse = "";
+
+        for await (const event of stream) {
+            if (event.event === "on_chat_model_stream") {
+                const data = event.data.chunk.content;
+                finalResponse += data;
+                res.write(`data: ${JSON.stringify({type: "token", content: data })}\n\n`);
+            } else if (event.event === "on_tool_start") {
+                const toolName = event.name;
+                const data = event.data.input;
+                res.write(`data: ${JSON.stringify({ type: "tool_start", tool: toolName, input: data })}\n\n`);
+            } else if (event.event === "on_tool_end") {
+                console.log("Tool output:", event.data.output);
+                res.write(`data: ${JSON.stringify({ type: "tool_end" })}\n\n`);
+            }
+        }
+
+        await db.insert(messages).values([
+            {
+                projectId,
+                role: "user",
+                type: "text",
+                content: message
+            },
+            {
+                projectId,
+                role: "assistant",
+                type: "text",
+                content: finalResponse
+            }
+        ])
+
+        res.end();
+    } catch (error) {
+        res.write(`data: ${JSON.stringify({ type: "error", error: `${error}` })}\n\n`);
+        res.end();
+    }
 })
 
 app.listen(3001, () => {

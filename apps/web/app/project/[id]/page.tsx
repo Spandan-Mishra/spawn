@@ -19,15 +19,11 @@ export default function Page({ params }: { params: Promise<Params> }) {
     useEffect(() => {
         const fetch = async () => {
             try {
-                const [filesData, sandboxData] = await Promise.all([
-                    getFiles({ projectId: id }),
-                    startSandbox({ projectId: id })
-                ]);
-
-                console.log("Sandbox Data:", sandboxData);
-
+                const filesData = await getFiles({ projectId: id });
                 setFiles(filesData);
-                setSandboxUrl(sandboxData);
+
+                const urlData = await startSandbox({ projectId: id });
+                setSandboxUrl(urlData);
                 setIsBooting(false);
             } catch (error) {
                 console.error("Failed to load the project:", error);
