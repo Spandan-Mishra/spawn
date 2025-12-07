@@ -13,7 +13,6 @@ type Params = { id: string };
 
 export default function Page({ params }: { params: Promise<Params> }) {
     const { id } = use(params);
-    console.log("Hello from paramjeet", id);
     const [files, setFiles] = useState<File[]>([]);
     const [sandboxUrl, setSandboxUrl] = useState<string>("");
     const [isBooting, setIsBooting] = useState(true);
@@ -48,9 +47,6 @@ export default function Page({ params }: { params: Promise<Params> }) {
         }
     }
 
-    console.log("FILES IN PAGE TSX", files);
-    console.log("SANDBOX URL XXXXXXXXXXXXXXXXX", sandboxUrl);
-
     return (
         <div className="h-screen flex overflow-hidden">
             <ResizablePanelGroup direction="horizontal">
@@ -65,7 +61,8 @@ export default function Page({ params }: { params: Promise<Params> }) {
                     </ToggleGroup>
                     {activeTab === 'preview' ? (
                         isBooting ? (
-                            <div className="w-full flex justify-center items-center">
+                            // Terminal loading screen
+                            <div className="w-full h-full flex justify-center items-center">
                                 <p>Booting Sandbox...</p>
                             </div>
                         ) : (

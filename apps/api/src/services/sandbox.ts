@@ -10,9 +10,7 @@ const createSandbox = async ({
     let sandbox: Sandbox | null = null;
     let isNewSandbox = false;
     
-    console.log("This operation is failing before fetching project");
     const [project] = await db.select().from(projects).where(eq(projects.id, projectId));
-    console.log("I am failing after fetching project");
     if (!project) {
         throw new Error("Project not found in database");
     }

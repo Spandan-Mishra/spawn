@@ -50,13 +50,16 @@ app.post("/project", async (req, res) => {
     })
 })
 
-app.post("/project/:projectId/startSandbox", async (req, res) => {
+app.get("/project/:projectId", async (req, res) => {
     const { projectId } = req.params;
-    console.log("ProjectID", projectId);
-    
-    const publicUrl = await createSandbox({ projectId });
+    const project = await db.select().from(projects).where(eq(projects.id, projectId)).then(r => r[0]);
 
-    console.log("Public URL xxxxxxxxxxxxxxxxxxxxx:", publicUrl);
+    res.json(project);
+})
+
+app.post("/project/:projectId/startSandbox", async (req, res) => {
+    const { projectId } = req.params;    
+    const publicUrl = await createSandbox({ projectId });
     
     res.json(publicUrl);
 })
@@ -90,7 +93,7 @@ app.post("/project/:projectId/chat", async (req, res) => {
             m.role === "user" ? new HumanMessage(m.content) : new AIMessage(m.content)
         ))
 
-        const systemMessage = new SystemMessage(SYSTEM_PROMPT(fileStructure) + project.description);
+        const systemMessage = new SystemMessage(SYSTEM_PROMPT(fileStructure));
 
         const graphInput = {
             messages: [

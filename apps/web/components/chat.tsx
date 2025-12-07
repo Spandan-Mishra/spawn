@@ -3,6 +3,7 @@ import { parseStream } from "@/lib/stream";
 import { Loader2, Send, Terminal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import MessageBubble from "./messageBubble";
+import axios from "axios";
 
 export interface Message {
     role: "user" | "assistant";
@@ -14,16 +15,38 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [toolCall, setToolCall] = useState<string | null>(null);
+    const [hasTriggered, setHasTriggered] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+    useEffect(() => {
+        if (hasTriggered || messages.length > 0) return;
 
-    const sendMessage = async () => {
-        if (!input.trim() || isLoading) return;
+        const init = async () => {
+            try {
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${projectId}`);
+                const prompt = res.data.description;
 
-        const userMessage: Message = { role: "user", content: input };
+                if (prompt) {
+                    setHasTriggered(true);
+                    await sendMessage(prompt);
+                }
+            } catch (error) {
+                console.error("Error fetching initial prompt:", error);
+            }
+        }
+
+        init();
+    }, []);
+
+    const sendMessage = async (msgContent?: string) => {
+        const content = msgContent || input;
+
+        if (!content.trim() || isLoading) return;
+
+        const userMessage: Message = { role: "user", content };
         setMessages(prev => {
             return [...prev, userMessage];
         })
@@ -116,7 +139,7 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
                         rows={2}
                     />
                     <button
-                        onClick={sendMessage}
+                        onClick={() => sendMessage()}
                         disabled={isLoading || !input.trim()}
                         className="absolute right-2 top-2 p-2 bg-blue-800 text-white rounded-md hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                     >
