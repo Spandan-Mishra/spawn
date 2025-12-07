@@ -17,11 +17,15 @@ export default function Page({ params }: { params: Promise<Params> }) {
     const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
     const [selectedFile, setSelectedFile] = useState<string>("src/App.tsx");
 
+    const refetchFiles = async () => {
+        const filesData = await getFiles({ projectId: id });
+        setFiles(filesData);
+    }
+
     useEffect(() => {
         const fetch = async () => {
             try {
-                const filesData = await getFiles({ projectId: id });
-                setFiles(filesData);
+                await refetchFiles();
 
                 const urlData = await startSandbox({ projectId: id });
                 setSandboxUrl(urlData);
@@ -47,7 +51,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
     return (
         <div className="h-screen w-full flex">
             <div className="w-1/4 border-r overflow-y-auto">
-                <Chat projectId={id} />
+                <Chat projectId={id} onFilesUpdate={refetchFiles} />
             </div>
             <div className="w-3/4">
                 <div className="absolute bottom-0 z-10">

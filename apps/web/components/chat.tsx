@@ -9,7 +9,7 @@ export interface Message {
     content: string;
 }
 
-const Chat = ({ projectId }: { projectId: string }) => {
+const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: () => void }) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +60,7 @@ const Chat = ({ projectId }: { projectId: string }) => {
                     setToolCall(chunk.tool);
                 } else if (chunk.type === "tool_end") {
                     setToolCall(null);
+                    onFilesUpdate();
                 }
             })
         } catch (error) {
