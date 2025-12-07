@@ -5,6 +5,9 @@ import { File, getFiles, startSandbox } from "../../../lib/api";
 import { Editor } from "@monaco-editor/react";
 import { FileExplorer } from "@/components/ui/file-explorer";
 import Chat from "@/components/chat";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { ToggleGroup } from "@radix-ui/react-toggle-group";
+import { ToggleGroupItem } from "@/components/ui/toggle-group";
 
 type Params = { id: string };
 
@@ -49,40 +52,44 @@ export default function Page({ params }: { params: Promise<Params> }) {
     console.log("SANDBOX URL XXXXXXXXXXXXXXXXX", sandboxUrl);
 
     return (
-        <div className="h-screen w-full flex">
-            <div className="w-1/4 border-r overflow-y-auto">
-                <Chat projectId={id} onFilesUpdate={refetchFiles} />
-            </div>
-            <div className="w-3/4">
-                <div className="absolute bottom-0 z-10">
-                    <button className={`px-4 py-2 ${activeTab === 'preview' ? 'bg-gray-300' : ''}`} onClick={() => setActiveTab('preview')}>Preview</button>
-                    <button className={`px-4 py-2 ${activeTab === 'code' ? 'bg-gray-300' : ''}`} onClick={() => setActiveTab('code')}>Code</button>
-                </div>
-                {activeTab === 'preview' ? (
-                    isBooting ? (
-                        <div className="w-full flex justify-center items-center">
-                            <p>Booting Sandbox...</p>
-                        </div>
+        <div className="h-screen flex overflow-hidden">
+            <ResizablePanelGroup direction="horizontal">
+                <ResizablePanel defaultSize={25}>
+                    <Chat projectId={id} onFilesUpdate={refetchFiles} />
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel defaultSize={75}>
+                    <ToggleGroup type="single">
+                        <ToggleGroupItem value="preview" onClick={() => setActiveTab('preview')}>Preview</ToggleGroupItem>
+                        <ToggleGroupItem value="code" onClick={() => setActiveTab('code')}>Code</ToggleGroupItem>
+                    </ToggleGroup>
+                    {activeTab === 'preview' ? (
+                        isBooting ? (
+                            <div className="w-full flex justify-center items-center">
+                                <p>Booting Sandbox...</p>
+                            </div>
+                        ) : (
+                            <iframe src={`https://${sandboxUrl}`} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms" />
+                        )
                     ) : (
-                        <iframe src={`https://${sandboxUrl}`} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms" />
-                    )
-                ) : (
-                    <div className="grid grid-cols-5 h-full">
-                        <div className="col-span-1 h-full border-r overflow-auto">
-                            <FileExplorer files={files} onFileSelect={handleFileSelect} />
-                        </div>
-                        <div className="col-span-4 h-full">
-                            <Editor
-                                height="100%"
-                                defaultLanguage="typescript"
-                                theme="vs-dark"
-                                value={files.find(f => f.path === selectedFile)?.content || ""}
-                                options={{ readOnly: true }}
-                            />
-                        </div>
-                    </div>
-                )}
-            </div>
+                        <ResizablePanelGroup direction="horizontal" className="grid grid-cols-5 h-full">
+                            <ResizablePanel defaultSize={20}>
+                                <FileExplorer files={files} onFileSelect={handleFileSelect} />
+                            </ResizablePanel>
+                            <ResizableHandle withHandle />
+                            <ResizablePanel defaultSize={80}>
+                                <Editor
+                                    height="100%"
+                                    defaultLanguage="typescript"
+                                    theme="vs-dark"
+                                    value={files.find(f => f.path === selectedFile)?.content || ""}
+                                    options={{ readOnly: true }}
+                                />
+                            </ResizablePanel>
+                        </ResizablePanelGroup>
+                    )}
+                </ResizablePanel>
+            </ResizablePanelGroup>
         </div>
     )
 }
