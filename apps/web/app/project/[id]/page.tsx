@@ -4,6 +4,7 @@ import { use, useEffect, useState } from "react";
 import { File, getFiles, startSandbox } from "../../../lib/api";
 import { Editor } from "@monaco-editor/react";
 import { FileExplorer } from "@/components/ui/file-explorer";
+import Chat from "@/components/chat";
 
 type Params = { id: string };
 
@@ -46,7 +47,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
     return (
         <div className="h-screen w-full flex">
             <div className="w-1/4 border-r overflow-y-auto">
-                Conversation Area
+                <Chat projectId={id} />
             </div>
             <div className="w-3/4">
                 <div className="absolute bottom-0 z-10">

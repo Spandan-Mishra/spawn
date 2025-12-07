@@ -1,8 +1,10 @@
 import { streamChat } from "@/lib/api";
 import { parseStream } from "@/lib/stream";
+import { Loader2, Send, Terminal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import MessageBubble from "./messageBubble";
 
-interface Message {
+export interface Message {
     role: "user" | "assistant";
     content: string;
 }
@@ -66,4 +68,68 @@ const Chat = ({ projectId }: { projectId: string }) => {
             setIsLoading(false);
         }
     }
+
+    return (
+        <div className="flex flex-col h-full bg-zinc-800 text-zinc-100 border-r border-y-zinc-950">
+            
+            {/* Header */}
+            <div className="p-4 border-b border-zinc-800 bg-zinc-900/50">
+                <h2 className="text-sm font-semibold flex items-center gap-2">
+                    <Terminal className="w-4 h-4 text-blue-400" />
+                    Terminal / Chat
+                </h2>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+                {messages.map((msg, index) => {
+                    return <MessageBubble key={index} message={msg} />;
+                })}
+
+                <div ref={messagesEndRef} />
+            </div>
+
+            {/* Tool call */}
+            {toolCall && (
+                <div className="px-2 py-2 bg-zinc-900 border-t border-zinc-800 flex items-center gap-2 text-xs text-blue-400">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Processing: {toolCall}</span>
+                </div>
+            )}
+
+            {/* Input */}
+            <div className="p-4 bg-zinc-900 border-t border-zinc-800">
+                <div className="relative">
+                    <textarea
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        }}
+                        placeholder="Enter a prompt to edit your website"
+                        disabled={isLoading}
+                        className="w-full bg-zinc-800 text-sm text-zinc-200 rounded-md p-3 pr-12 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-[50px] max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-600 scrollbar-track-transparent"
+                        rows={2}
+                    />
+                    <button
+                        onClick={sendMessage}
+                        disabled={isLoading || !input.trim()}
+                        className="absolute right-2 top-2 p-2 bg-blue-800 text-white rounded-md hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                    >
+                        {isLoading ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                            <Send className="w-4 h-4" />
+                        )}
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    )
 }
+
+export default Chat;
