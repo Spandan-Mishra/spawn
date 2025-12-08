@@ -134,6 +134,20 @@ export function cn(...inputs: ClassValue[]) {
 
 @theme {
   --font-sans: "Inter", sans-serif;
+  
+  --animate-fade-in: fade-in 0.5s ease-out;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-pulse-slow: pulse 3s infinite;
+  
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  @keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
 }
 
 :root {
@@ -183,20 +197,46 @@ export function cn(...inputs: ClassValue[]) {
   `.trim(),
 
   "src/App.tsx": `
-import { useState } from 'react'
+import { Sparkles } from 'lucide-react';
 
 export default function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
-      <div className="w-full max-w-md p-8 space-y-4 border rounded-xl shadow-lg bg-card">
-        <h1 className="text-2xl font-bold text-center">Spawn Sandbox</h1>
-        <p className="text-center text-muted-foreground">
-          Vite + React + Tailwind v4 + Shadcn UI
-        </p>
+    <div className="flex min-h-screen items-center justify-center text-foreground p-4">
+      <div className="w-full max-w-md space-y-8 animate-slide-up">
         
-        <div className="p-4 rounded-md bg-secondary text-secondary-foreground text-center">
-          Ready for AI generation.
+        {/* Header Section */}
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center p-3 rounded-full bg-primary/10 text-primary mb-4 animate-pulse-slow">
+            <Sparkles className="w-8 h-8" />
+          </div>
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+            Spawn
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Your AI-powered React sandbox is ready.
+          </p>
         </div>
+
+        {/* Status Card */}
+        <div className="border border-border rounded-xl p-6 bg-card shadow-lg backdrop-blur-sm">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="font-medium">Environment Active</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Vite • React • Tailwind v4 • Shadcn UI
+            </p>
+            <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
+              <div className="h-full bg-primary w-full animate-fade-in" />
+            </div>
+          </div>
+        </div>
+
+        <p className="text-center text-sm text-muted-foreground animate-fade-in">
+          Type a prompt to begin building...
+        </p>
+
       </div>
     </div>
   )

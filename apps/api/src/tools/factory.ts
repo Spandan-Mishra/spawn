@@ -40,8 +40,6 @@ export const getOnChainTools = async ({ projectId }: { projectId: string }) => {
                     return `Error: File not found at path ${path}`;
                 }
                 
-                console.log(`Content of the file at path ${path}:`, result[0].content);
-
                 return result[0].content ?? "";
             },
             {

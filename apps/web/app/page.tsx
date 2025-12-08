@@ -17,7 +17,7 @@ export default function LandingPage() {
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project`, {
         prompt: prompt,
-        userId: ""
+        userId: process.env.NEXT_PUBLIC_USERID
       });
       
       const { projectId } = res.data;

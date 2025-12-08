@@ -1,4 +1,4 @@
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatOpenAI } from "@langchain/openai";
 import { StateGraph, MessagesAnnotation } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { getOnChainTools } from "../tools/factory";
@@ -9,11 +9,12 @@ export default async function createAgentGraph({
     model,
 }: {
     projectId: string;
-    model: ChatGoogleGenerativeAI
+    model: ChatOpenAI;
 }) {
     const tools = await getOnChainTools({ projectId });
 
     const modelWithTools = model.bindTools(tools);
+    console.log("Agent graph called");
 
     const agentNode = async (state: typeof MessagesAnnotation.State) => {
         const response = await modelWithTools.invoke(state.messages);

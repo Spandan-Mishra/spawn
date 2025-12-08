@@ -18,6 +18,8 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
     const [hasTriggered, setHasTriggered] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    console.log(toolCall);
+
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
@@ -29,6 +31,7 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${projectId}`);
                 const prompt = res.data.description;
 
+                console.log("I have been triggered with prompt:", prompt);
                 if (prompt) {
                     setHasTriggered(true);
                     await sendMessage(prompt);
@@ -43,6 +46,7 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
 
     const sendMessage = async (msgContent?: string) => {
         const content = msgContent || input;
+        console.log("Send message called with content:", content);
 
         if (!content.trim() || isLoading) return;
 
@@ -51,12 +55,11 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
             return [...prev, userMessage];
         })
 
-        const payload = input;
         setIsLoading(true);
         setInput("");
 
         try {
-            const response = await streamChat(projectId, payload);
+            const response = await streamChat(projectId, content);
 
             setMessages(prev => [...prev, { role: "assistant", content: "" }]);
 
@@ -70,9 +73,13 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
                 if(chunk.type === "token") {
                     setMessages((prev) => {
                         const newMessages = [...prev];
+                        const lastIndex = newMessages.length - 1;
                         const lastMessage = newMessages[newMessages.length - 1] as Message;
                         if (lastMessage && lastMessage.role === "assistant") {
-                            lastMessage.content += chunk.content;
+                            newMessages[lastIndex] = {
+                                ...lastMessage,
+                                content: lastMessage.content + chunk.content
+                            }
                         }
 
                         newMessages[newMessages.length - 1] = lastMessage;
