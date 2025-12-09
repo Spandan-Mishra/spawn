@@ -10,7 +10,7 @@ export interface Message {
     content: string;
 }
 
-const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: () => void }) => {
+const Chat = ({ projectId, onFilesUpdate, onStreamFinished }: { projectId: string, onFilesUpdate: () => void, onStreamFinished?: () => void }) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -102,6 +102,9 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
             console.error("Error during chat streaming:", error);
         } finally {
             setIsLoading(false);
+            if(onStreamFinished) {
+                onStreamFinished();
+            }
         }
     }
 

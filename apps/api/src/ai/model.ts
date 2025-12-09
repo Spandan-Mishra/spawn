@@ -1,8 +1,8 @@
 import { ChatOpenAI } from "@langchain/openai"
-import { QwenCoder3 } from "./choices"
+import { GPTOSSF, QwenCoder3 } from "./choices"
 
 export const model = new ChatOpenAI({
-    model: QwenCoder3,
+    model: GPTOSSF,
     apiKey: process.env.OPENROUTER_API_KEY!,
     temperature: 0.1,
     maxTokens: 8000,

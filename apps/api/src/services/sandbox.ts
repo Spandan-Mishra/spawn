@@ -7,6 +7,7 @@ const createSandbox = async ({
 }: {
     projectId: string
 }) => {
+    // TODO: Sandbox no content fix
     let sandbox: Sandbox | null = null;
     let isNewSandbox = false;
     
@@ -36,6 +37,7 @@ const createSandbox = async ({
     }
 
     if (isNewSandbox && sandbox) {
+        console.log("Writing to sandbox");
         const filesToWrite = await db.select().from(files).where(eq(files.projectId, projectId));
 
         await Promise.all(filesToWrite.map(async (file) => {
