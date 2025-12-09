@@ -16,6 +16,7 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
     const [isLoading, setIsLoading] = useState(false);
     const [toolCall, setToolCall] = useState<string | null>(null);
     const [hasTriggered, setHasTriggered] = useState(false);
+    const [isStreaming, setIsStreaming] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     console.log(toolCall);
@@ -56,6 +57,7 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
         })
 
         setIsLoading(true);
+        setIsStreaming(false);
         setInput("");
 
         try {
@@ -66,6 +68,9 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
             if (!response.body) {
                 throw new Error("No response body");
             }
+
+            setIsLoading(false);
+            setIsStreaming(true);
 
             const reader = response.body.getReader();
 
@@ -117,6 +122,12 @@ const Chat = ({ projectId, onFilesUpdate }: { projectId: string, onFilesUpdate: 
                     return <MessageBubble key={index} message={msg} />;
                 })}
 
+                {isLoading && !isStreaming && (
+                    <div className="flex items-center gap-2 text-zinc-500 text-sm px-4">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Thinking...</span>
+                    </div>
+                )}
                 <div ref={messagesEndRef} />
             </div>
 

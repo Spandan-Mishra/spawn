@@ -7,14 +7,12 @@ export interface File{
 }
 
 const getFiles = async ({ projectId } : { projectId: string }): Promise<File[]> => {
-    console.log("Hello from file", projectId);
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${projectId}/files`);
     return response.data;
 }
 
 const startSandbox = async ({ projectId }: { projectId: string }): Promise<string> => {
     const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${projectId}/startSandbox`);
-    console.log("Response from startSandbox API:", response.data);
     return response.data;
 }
 
