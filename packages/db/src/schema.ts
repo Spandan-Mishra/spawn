@@ -41,14 +41,14 @@ export const files = pgTable("files", {
     path: text("path").notNull(),
     content: text("content"),
     projectId: uuid("project_id")
-        .references(() => projects.id)
+        .references(() => projects.id, { onDelete: "cascade" })
         .notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
     },
-    (f) => ({
-        uniquePathPerProject: unique("unique_path_per_project").on(f.projectId, f.path)
-    })
+    (f) => [
+        unique("unique_path_per_project").on(f.projectId, f.path)
+    ]
 )
 
 export const usersRelations = relations(users, ({ many }) => ({

@@ -28,9 +28,12 @@ const createSandbox = async ({
     if (!sandbox) {
         isNewSandbox = true;
 
-        sandbox = await Sandbox.create({
-            apiKey: process.env.E2B_API_KEY!,
-        })
+        sandbox = await Sandbox.create(
+            "code-interpreter-v1",
+            {
+                apiKey: process.env.E2B_API_KEY!,
+            }
+        )
         await db.update(projects).set({ sandboxId: sandbox.sandboxId }).where(eq(projects.id, projectId));
     }
 
