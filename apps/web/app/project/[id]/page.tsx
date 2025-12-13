@@ -18,6 +18,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
     const [status, setStatus] = useState<'generating' | 'booting' | 'ready'>('generating');
     const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
     const [selectedFile, setSelectedFile] = useState<string>("src/App.tsx");
+    const [showLoader, setShowLoader] = useState<boolean>(true);
 
     const refetchFiles = async () => {
         const filesData = await getFiles({ projectId: id });
@@ -35,6 +36,18 @@ export default function Page({ params }: { params: Promise<Params> }) {
 
         fetch();
     }, []);
+
+    useEffect(() => {
+        if (status === 'ready') {
+            const timer = setTimeout(() => {
+                setShowLoader(false);
+            }, 10000);
+
+            return () => clearTimeout(timer);
+        } else {
+            setShowLoader(true);
+        }
+    }, [status]);
 
     const handleFileSelect = (filePath: string) => {
         const file = files.find(f => f.path === filePath);
@@ -70,10 +83,10 @@ export default function Page({ params }: { params: Promise<Params> }) {
                         <ToggleGroupItem value="code">Code</ToggleGroupItem>
                     </ToggleGroup>}
                     <div className="h-full w-full">
-                        {status !== 'ready' && (
+                        {showLoader && (
                             <div className="h-full w-full z-50 bg-zinc-950">
-                            <StepsLoader currentStep={status} />
-                        </div>
+                                <StepsLoader currentStep={status} />
+                            </div>
                         )}
 
                         {status === 'ready' && (

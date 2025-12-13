@@ -16,32 +16,32 @@ export function StepsLoader({ currentStep }: { currentStep: 'generating' | 'boot
           
           <TypingAnimation className="text-white">&gt; spawn init</TypingAnimation>
           
-          <AnimatedSpan delay={1500} className="text-green-500">
+          <AnimatedSpan className="text-green-500">
             ✔ Analyzing prompt requirements.
           </AnimatedSpan>
 
-          <AnimatedSpan delay={2000} className="text-green-500">
-            ✔ Scaffolding Vite + React + Tailwind v4.
+          <AnimatedSpan className="text-green-500">
+            ✔ Spinning up Vite + React + Tailwind v4.
           </AnimatedSpan>
 
-          <AnimatedSpan delay={2500} className="text-green-500">
+          <AnimatedSpan className="text-green-500">
             ✔ Integrating Shadcn UI registry.
           </AnimatedSpan>
 
-          <AnimatedSpan delay={3000} className="text-blue-500">
+          <AnimatedSpan className="text-blue-500">
             Generating component logic...
           </AnimatedSpan>
 
-          <AnimatedSpan delay={4500} className="text-zinc-500">
-            Writing source files to database...
+          <AnimatedSpan className="text-zinc-500">
+            Writing source files for preview...
           </AnimatedSpan>
 
           {showBooting && (
             <>
-              <TypingAnimation delay={500}>&gt; npm install && npm run dev</TypingAnimation>
+              <TypingAnimation className="text-white">&gt; npm install && npm run dev</TypingAnimation>
               
               <AnimatedSpan delay={1500} className="text-yellow-500">
-                ⚠ Initializing Sandbox Container...
+                ⚙ Initializing Preview Environment
               </AnimatedSpan>
               
               <AnimatedSpan delay={2500} className="text-green-500">
