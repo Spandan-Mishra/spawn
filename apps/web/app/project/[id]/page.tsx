@@ -6,8 +6,7 @@ import { Editor } from "@monaco-editor/react";
 import { FileExplorer } from "@/components/ui/file-explorer";
 import Chat from "@/components/chat";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { ToggleGroup } from "@radix-ui/react-toggle-group";
-import { ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { StepsLoader } from "@/components/stepsLoader";
 
 type Params = { id: string };
@@ -35,7 +34,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
         }
 
         fetch();
-    }, [id]);
+    }, []);
 
     const handleFileSelect = (filePath: string) => {
         const file = files.find(f => f.path === filePath);
@@ -66,9 +65,9 @@ export default function Page({ params }: { params: Promise<Params> }) {
                 </ResizablePanel>
                 <ResizableHandle />
                 <ResizablePanel defaultSize={75}>
-                   {status === 'ready' && <ToggleGroup type="single">
-                        <ToggleGroupItem value="preview" onClick={() => setActiveTab('preview')}>Preview</ToggleGroupItem>
-                        <ToggleGroupItem value="code" onClick={() => setActiveTab('code')}>Code</ToggleGroupItem>
+                   {status === 'ready' && <ToggleGroup type="single" value={activeTab} onValueChange={(value) => value && setActiveTab(value as 'preview' | 'code')} defaultValue='preview'>
+                        <ToggleGroupItem value="preview">Preview</ToggleGroupItem>
+                        <ToggleGroupItem value="code">Code</ToggleGroupItem>
                     </ToggleGroup>}
                     <div className="h-full w-full">
                         {status !== 'ready' && (

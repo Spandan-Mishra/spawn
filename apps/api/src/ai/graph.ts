@@ -14,7 +14,6 @@ export default async function createAgentGraph({
     const tools = await getOnChainTools({ projectId });
 
     const modelWithTools = model.bindTools(tools);
-    console.log("Agent graph called");
 
     const agentNode = async (state: typeof MessagesAnnotation.State) => {
         const response = await modelWithTools.invoke(state.messages);

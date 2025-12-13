@@ -19,8 +19,6 @@ const Chat = ({ projectId, onFilesUpdate, onStreamFinished }: { projectId: strin
     const [isStreaming, setIsStreaming] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    console.log(toolCall);
-
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
@@ -86,9 +84,6 @@ const Chat = ({ projectId, onFilesUpdate, onStreamFinished }: { projectId: strin
                                 content: lastMessage.content + chunk.content
                             }
                         }
-
-                        newMessages[newMessages.length - 1] = lastMessage;
-
                         return newMessages;
                     })
                 } else if (chunk.type === "tool_start") {

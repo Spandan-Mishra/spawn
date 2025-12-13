@@ -115,14 +115,15 @@ app.post("/project/:projectId/chat", async (req, res) => {
         for await (const event of stream) {
             if (event.event === "on_chat_model_stream") {
                 const data = event.data.chunk.content;
-                finalResponse += data;
-                res.write(`data: ${JSON.stringify({type: "token", content: data })}\n\n`);
+                if (data && typeof data === "string" && data.length > 0) {
+                    finalResponse += data;
+                    res.write(`data: ${JSON.stringify({type: "token", content: data })}\n\n`);
+                }
             } else if (event.event === "on_tool_start") {
                 const toolName = event.name;
                 const data = event.data.input;
                 res.write(`data: ${JSON.stringify({ type: "tool_start", tool: toolName, input: data })}\n\n`);
             } else if (event.event === "on_tool_end") {
-                console.log("Tool output:", event.data.output);
                 res.write(`data: ${JSON.stringify({ type: "tool_end" })}\n\n`);
             }
         }

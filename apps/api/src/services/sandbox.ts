@@ -7,7 +7,6 @@ const createSandbox = async ({
 }: {
     projectId: string
 }) => {
-    // TODO: Sandbox no content fix
     let sandbox: Sandbox | null = null;
     let isNewSandbox = false;
     
@@ -21,7 +20,7 @@ const createSandbox = async ({
             sandbox = await Sandbox.connect(project.sandboxId);
             console.log("Connected to existing sandbox:", project.sandboxId);
         } catch (error) {
-            console.error("Failed to connect to existing sandbox, creating a new one:", error);
+            console.error("Failed to connect to existing sandbox, creating a new one");
             sandbox = null;
         }
     }
@@ -32,12 +31,10 @@ const createSandbox = async ({
         sandbox = await Sandbox.create({
             apiKey: process.env.E2B_API_KEY!,
         })
-
         await db.update(projects).set({ sandboxId: sandbox.sandboxId }).where(eq(projects.id, projectId));
     }
 
     if (isNewSandbox && sandbox) {
-        console.log("Writing to sandbox");
         const filesToWrite = await db.select().from(files).where(eq(files.projectId, projectId));
 
         await Promise.all(filesToWrite.map(async (file) => {

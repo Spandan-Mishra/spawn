@@ -2,9 +2,8 @@ import { Message } from "./chat"
 import ReactMarkdown from "react-markdown";
 
 const MessageBubble = ({ message }: { message: Message }) => {
-    if (!message.content) return ;
+    if (!message.content || message.content.trim() === "") return ;
     const isUser = message.role === "user";
-    console.log(message);
 
     return (
         <div className={`flex flex-col max-w-[85%] ${isUser ? "self-end items-end" : "self-start items-start"}`}>

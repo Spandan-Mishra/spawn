@@ -26,6 +26,7 @@ const parseStream = async (reader: ReadableStreamDefaultReader, onChunk: (chunk:
                 }
             }
         }
+        console.log("Stream parsing iteration complete");
     }
 }
 
