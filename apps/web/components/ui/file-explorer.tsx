@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 import { Tree, Folder, File } from "./file-tree";
 import { filesToTree, FileTreeNode } from "@/lib/filesToTree";
 
@@ -8,7 +8,6 @@ interface FileExplorerProps {
 }
 
 export function FileExplorer({ files, onFileSelect }: FileExplorerProps) {
-  
   const elements = useMemo(() => filesToTree(files), [files]);
 
   const renderTreeItem = (item: FileTreeNode) => {
@@ -19,13 +18,9 @@ export function FileExplorer({ files, onFileSelect }: FileExplorerProps) {
         </Folder>
       );
     }
-    
+
     return (
-      <File 
-        key={item.id} 
-        value={item.id}
-        onClick={() => onFileSelect(item.id)}
-      >
+      <File key={item.id} value={item.id} onClick={() => onFileSelect(item.id)}>
         <p>{item.name}</p>
       </File>
     );

@@ -1,78 +1,90 @@
 export const BASE_TEMPLATE = {
   // Config files
 
-  "package.json": JSON.stringify({
-    "name": "spawn-project",
-    "private": true,
-    "version": "0.0.0",
-    "type": "module",
-    "scripts": {
-      "dev": "vite --host",
-      "build": "tsc && vite build",
-      "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-      "preview": "vite preview"
+  "package.json": JSON.stringify(
+    {
+      name: "spawn-project",
+      private: true,
+      version: "0.0.0",
+      type: "module",
+      scripts: {
+        dev: "vite --host",
+        build: "tsc && vite build",
+        lint: "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        preview: "vite preview",
+      },
+      dependencies: {
+        react: "^18.3.1",
+        "react-dom": "^18.3.1",
+        "lucide-react": "^0.344.0",
+        clsx: "^2.1.1",
+        "tailwind-merge": "^2.5.2",
+        "class-variance-authority": "^0.7.0",
+        "@radix-ui/react-slot": "^1.1.0",
+        "tailwindcss-animate": "^1.0.7",
+        "framer-motion": "^11.0.8",
+      },
+      devDependencies: {
+        "@types/react": "^18.3.3",
+        "@types/react-dom": "^18.3.0",
+        "@vitejs/plugin-react": "^4.3.1",
+        typescript: "^5.5.3",
+        vite: "^5.4.1",
+        tailwindcss: "^4.0.0-alpha.25",
+        "@tailwindcss/vite": "^4.0.0-alpha.25",
+        eslint: "^9.9.0",
+        globals: "^15.9.0",
+        "@types/node": "^20.0.0",
+      },
     },
-    "dependencies": {
-      "react": "^18.3.1",
-      "react-dom": "^18.3.1",
-      "lucide-react": "^0.344.0",
-      "clsx": "^2.1.1",
-      "tailwind-merge": "^2.5.2",
-      "class-variance-authority": "^0.7.0" ,
-      "@radix-ui/react-slot": "^1.1.0",
-      "tailwindcss-animate": "^1.0.7",
-      "framer-motion": "^11.0.8",
-    },
-    "devDependencies": {
-      "@types/react": "^18.3.3",
-      "@types/react-dom": "^18.3.0",
-      "@vitejs/plugin-react": "^4.3.1",
-      "typescript": "^5.5.3",
-      "vite": "^5.4.1",
-      "tailwindcss": "^4.0.0-alpha.25", 
-      "@tailwindcss/vite": "^4.0.0-alpha.25",
-      "eslint": "^9.9.0",
-      "globals": "^15.9.0",
-      "@types/node": "^20.0.0" 
-    }
-  }, null, 2),
+    null,
+    2,
+  ),
 
-  "tsconfig.json": JSON.stringify({
-    "compilerOptions": {
-      "target": "ES2020",
-      "useDefineForClassFields": true,
-      "lib": ["ES2020", "DOM", "DOM.Iterable"],
-      "module": "ESNext",
-      "skipLibCheck": true,
-      "moduleResolution": "bundler",
-      "allowImportingTsExtensions": true,
-      "resolveJsonModule": true,
-      "isolatedModules": true,
-      "noEmit": true,
-      "jsx": "react-jsx",
-      "strict": true,
-      "noUnusedLocals": true,
-      "noUnusedParameters": true,
-      "noFallthroughCasesInSwitch": true,
-      "baseUrl": ".",
-      "paths": {
-        "@/*": ["./src/*"]
-      }
+  "tsconfig.json": JSON.stringify(
+    {
+      compilerOptions: {
+        target: "ES2020",
+        useDefineForClassFields: true,
+        lib: ["ES2020", "DOM", "DOM.Iterable"],
+        module: "ESNext",
+        skipLibCheck: true,
+        moduleResolution: "bundler",
+        allowImportingTsExtensions: true,
+        resolveJsonModule: true,
+        isolatedModules: true,
+        noEmit: true,
+        jsx: "react-jsx",
+        strict: true,
+        noUnusedLocals: true,
+        noUnusedParameters: true,
+        noFallthroughCasesInSwitch: true,
+        baseUrl: ".",
+        paths: {
+          "@/*": ["./src/*"],
+        },
+      },
+      include: ["src"],
+      references: [{ path: "./tsconfig.node.json" }],
     },
-    "include": ["src"],
-    "references": [{ "path": "./tsconfig.node.json" }]
-  }, null, 2),
+    null,
+    2,
+  ),
 
-  "tsconfig.node.json": JSON.stringify({
-    "compilerOptions": {
-      "composite": true,
-      "skipLibCheck": true,
-      "module": "ESNext",
-      "moduleResolution": "bundler",
-      "allowSyntheticDefaultImports": true
+  "tsconfig.node.json": JSON.stringify(
+    {
+      compilerOptions: {
+        composite: true,
+        skipLibCheck: true,
+        module: "ESNext",
+        moduleResolution: "bundler",
+        allowSyntheticDefaultImports: true,
+      },
+      include: ["vite.config.ts"],
     },
-    "include": ["vite.config.ts"]
-  }, null, 2),
+    null,
+    2,
+  ),
 
   "vite.config.ts": `
 import { defineConfig } from 'vite'
@@ -441,5 +453,5 @@ export default function App() {
     </div>
   )
 }
-  `.trim()
+  `.trim(),
 };

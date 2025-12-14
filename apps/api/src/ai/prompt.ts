@@ -11,7 +11,7 @@ Environment:
 - Utils: clsx, tailwind-merge (available via \`lib/utils.ts\`)
 
 Current File Structure:
-${fileStructure.map(f => `- ${f}`).join("\n")}
+${fileStructure.map((f) => `- ${f}`).join("\n")}
 
 Design Guidelines:
 
