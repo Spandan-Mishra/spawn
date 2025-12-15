@@ -1,6 +1,6 @@
 import { streamChat } from "@/lib/api";
 import { parseStream } from "@/lib/stream";
-import { Loader2, Send, Terminal } from "lucide-react";
+import { ArrowUpRight, Loader2, Terminal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import MessageBubble from "./messageBubble";
 import axios from "axios";
@@ -29,7 +29,8 @@ const Chat = ({
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, toolCall]);
+
   useEffect(() => {
     if (hasTriggered || messages.length > 0) return;
 
@@ -40,7 +41,6 @@ const Chat = ({
         );
         const prompt = res.data.description;
 
-        console.log("I have been triggered with prompt:", prompt);
         if (prompt) {
           setHasTriggered(true);
           await sendMessage(prompt);
@@ -55,14 +55,11 @@ const Chat = ({
 
   const sendMessage = async (msgContent?: string) => {
     const content = msgContent || input;
-    console.log("Send message called with content:", content);
 
     if (!content.trim() || isLoading) return;
 
     const userMessage: Message = { role: "user", content };
-    setMessages((prev) => {
-      return [...prev, userMessage];
-    });
+    setMessages((prev) => [...prev, userMessage]);
 
     setIsLoading(true);
     setIsStreaming(false);
@@ -87,7 +84,7 @@ const Chat = ({
           setMessages((prev) => {
             const newMessages = [...prev];
             const lastIndex = newMessages.length - 1;
-            const lastMessage = newMessages[newMessages.length - 1] as Message;
+            const lastMessage = newMessages[lastIndex];
             if (lastMessage && lastMessage.role === "assistant") {
               newMessages[lastIndex] = {
                 ...lastMessage,
@@ -114,41 +111,53 @@ const Chat = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-zinc-800 text-zinc-100 border-r border-y-zinc-950">
+    <div className="flex flex-col h-full bg-zinc-950 border-r border-zinc-800 font-sans">
       {/* Header */}
-      <div className="p-4 border-b border-zinc-800 bg-zinc-900/50">
-        <h2 className="text-sm font-semibold flex items-center gap-2">
-          <Terminal className="w-4 h-4 text-blue-400" />
-          Terminal / Chat
-        </h2>
+      <div className="px-4 py-3 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
+        <div className="flex items-center gap-2 text-zinc-100">
+          <div className="p-1.5 bg-green-500/10 rounded-md">
+            <Terminal className="w-4 h-4 text-green-500" />
+          </div>
+          <h2 className="text-sm font-medium tracking-tight">Spawn Agent</h2>
+          {isStreaming && (
+            <span className="flex h-2 w-2 ml-auto">
+              <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-        {messages.map((msg, index) => {
-          return <MessageBubble key={index} message={msg} />;
-        })}
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        {messages.map((msg, index) => (
+          <MessageBubble key={index} message={msg} />
+        ))}
 
-        {isLoading && !isStreaming && (
-          <div className="flex items-center gap-2 text-zinc-500 text-sm px-4">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Thinking...</span>
+        {/* Loading / Tool Status Indicator */}
+        {(isLoading || toolCall) && (
+          <div className="flex items-center gap-3 text-zinc-400 text-xs animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="h-8 w-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+              <Loader2 className="w-4 h-4 animate-spin text-green-500" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <span className="font-medium text-zinc-300">
+                {toolCall ? "Running task..." : "Thinking..."}
+              </span>
+              {toolCall && (
+                <span className="font-mono text-zinc-500 text-[10px] uppercase tracking-wider">
+                  {toolCall}
+                </span>
+              )}
+            </div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Tool call */}
-      {toolCall && (
-        <div className="px-2 py-2 bg-zinc-900 border-t border-zinc-800 flex items-center gap-2 text-xs text-blue-400">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span>Processing: {toolCall}</span>
-        </div>
-      )}
-
-      {/* Input */}
-      <div className="p-4 bg-zinc-900 border-t border-zinc-800">
-        <div className="relative">
+      {/* Input Area */}
+      <div className="p-4 bg-zinc-950 border-t border-zinc-800">
+        <div className="relative group">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -158,22 +167,31 @@ const Chat = ({
                 sendMessage();
               }
             }}
-            placeholder="Enter a prompt to edit your website"
+            placeholder="Describe your app..."
             disabled={isLoading}
-            className="w-full bg-zinc-800 text-sm text-zinc-200 rounded-md p-3 pr-12 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-[50px] max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-600 scrollbar-track-transparent"
-            rows={2}
+            className="w-full bg-zinc-900/50 text-sm text-zinc-100 placeholder:text-zinc-500 rounded-xl border border-zinc-800 p-4 pr-12 resize-none focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/50 transition-all duration-200 min-h-[52px] max-h-[200px] overflow-y-auto shadow-sm [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            rows={1}
+            style={{ 
+              minHeight: '52px',
+              height: input ? 'auto' : '52px'
+            }}
           />
           <button
             onClick={() => sendMessage()}
             disabled={isLoading || !input.trim()}
-            className="absolute right-2 top-2 p-2 bg-blue-800 text-white rounded-md hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+            className="absolute right-2 bottom-4 p-2 bg-green-700 hover:bg-green-600 text-white rounded-lg disabled:opacity-0 disabled:scale-90 transition-all duration-200 shadow-md group-focus-within:opacity-100"
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <Send className="w-4 h-4" />
+              <ArrowUpRight className="w-4 h-4" />
             )}
           </button>
+        </div>
+        <div className="text-center mt-2">
+            <span className="text-[10px] text-zinc-600">
+                Spawn can make mistakes. Check generated code.
+            </span>
         </div>
       </div>
     </div>
