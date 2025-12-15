@@ -33,7 +33,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${exo.variable} ${economica.variable} ${kodeMono.variable}`}>
+      <body
+        className={`${exo.variable} ${economica.variable} ${kodeMono.variable}`}
+      >
         {children}
       </body>
     </html>

@@ -171,9 +171,9 @@ const Chat = ({
             disabled={isLoading}
             className="w-full bg-zinc-900/50 text-sm text-zinc-100 placeholder:text-zinc-500 rounded-xl border border-zinc-800 p-4 pr-12 resize-none focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/50 transition-all duration-200 min-h-[52px] max-h-[200px] overflow-y-auto shadow-sm [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             rows={1}
-            style={{ 
-              minHeight: '52px',
-              height: input ? 'auto' : '52px'
+            style={{
+              minHeight: "52px",
+              height: input ? "auto" : "52px",
             }}
           />
           <button
@@ -189,9 +189,9 @@ const Chat = ({
           </button>
         </div>
         <div className="text-center mt-2">
-            <span className="text-[10px] text-zinc-600">
-                Spawn can make mistakes. Check generated code.
-            </span>
+          <span className="text-[10px] text-zinc-600">
+            Spawn can make mistakes. Check generated code.
+          </span>
         </div>
       </div>
     </div>

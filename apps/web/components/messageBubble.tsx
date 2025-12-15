@@ -7,9 +7,7 @@ const MessageBubble = ({ message }: { message: Message }) => {
   const isUser = message.role === "user";
 
   return (
-    <div
-      className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
-    >
+    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
       <div
         className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed shadow-sm ${
           isUser
