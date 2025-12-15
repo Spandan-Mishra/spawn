@@ -296,6 +296,7 @@ const File = forwardRef<
       isSelectable = true,
       isSelect,
       fileIcon,
+      onClick,
       children,
       ...props
     },
@@ -308,6 +309,7 @@ const File = forwardRef<
         ref={ref}
         type="button"
         disabled={!isSelectable}
+        data-selected={isSelected}
         className={cn(
           "flex w-fit items-center gap-1 rounded-md pr-1 text-sm duration-200 ease-in-out rtl:pr-0 rtl:pl-1",
           {
@@ -317,7 +319,10 @@ const File = forwardRef<
           direction === "rtl" ? "rtl" : "ltr",
           className,
         )}
-        onClick={() => selectItem(value)}
+        onClick={(e) => {
+          selectItem(value);
+          onClick?.(e);
+        }}
         {...props}
       >
         {fileIcon ?? <FileIcon className="size-4" />}
