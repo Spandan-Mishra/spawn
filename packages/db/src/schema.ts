@@ -6,6 +6,7 @@ import {
   uuid,
   unique,
   integer,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { pgTable } from "drizzle-orm/pg-core";
 
@@ -14,7 +15,7 @@ export const messageType = pgEnum("message_type", ["text", "tool_call"]);
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
-  username: text("username").notNull(),
+  name: text("username"),
   email: text("email").notNull().unique(),
   emailVerified: timestamp("email_verified"),
   image: text("image"),
@@ -25,7 +26,6 @@ export const users = pgTable("users", {
 export const accounts = pgTable(
   "accounts",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
     userId: uuid("user_id")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
@@ -43,12 +43,11 @@ export const accounts = pgTable(
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (a) => [
-    unique("unique_provider_account").on(a.provider, a.providerAccountId),
+    primaryKey({ columns: [a.provider, a.providerAccountId] }),
   ],
 );
 
 export const sessions = pgTable("sessions", {
-  id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
@@ -59,16 +58,15 @@ export const sessions = pgTable("sessions", {
 });
 
 export const verificationTokens = pgTable(
-  "verfication_tokens",
+  "verification_tokens",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
     identifier: text("identifier").notNull(),
     token: text("token").notNull().unique(),
     expires: timestamp("expires").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (vt) => [unique("unique_token_per_identifier").on(vt.identifier, vt.token)],
+  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
 );
 
 export const projects = pgTable("projects", {
@@ -76,7 +74,7 @@ export const projects = pgTable("projects", {
   description: text("description"),
   sandboxId: text("sandbox_id"),
   userId: uuid("user_id")
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import { Exo, Economica, Kode_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/providers";
 
 const exo = Exo({
   subsets: ["latin"],
@@ -36,7 +36,9 @@ export default function RootLayout({
       <body
         className={`${exo.variable} ${economica.variable} ${kodeMono.variable}`}
       >
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
