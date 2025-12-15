@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { pgEnum, text, timestamp, uuid, unique } from "drizzle-orm/pg-core";
+import {
+  pgEnum,
+  text,
+  timestamp,
+  uuid,
+  unique,
+  integer,
+} from "drizzle-orm/pg-core";
 import { pgTable } from "drizzle-orm/pg-core";
 
 export const role = pgEnum("role", ["user", "assistant"]);
@@ -8,10 +15,61 @@ export const messageType = pgEnum("message_type", ["text", "tool_call"]);
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   username: text("username").notNull(),
-  password: text("password").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: timestamp("email_verified"),
+  image: text("image"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const accounts = pgTable(
+  "accounts",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    type: text("type").notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
+    refreshToken: text("refresh_token"),
+    accessToken: text("access_token"),
+    expiresAt: integer("expires_at"),
+    tokenType: text("token_type"),
+    scope: text("scope"),
+    idToken: text("id_token"),
+    sessionState: text("session_state"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (a) => [
+    unique("unique_provider_account").on(a.provider, a.providerAccountId),
+  ],
+);
+
+export const sessions = pgTable("sessions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  sessionToken: text("session_token").notNull().unique(),
+  expires: timestamp("expires").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const verificationTokens = pgTable(
+  "verfication_tokens",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull().unique(),
+    expires: timestamp("expires").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (vt) => [unique("unique_token_per_identifier").on(vt.identifier, vt.token)],
+);
 
 export const projects = pgTable("projects", {
   id: uuid("id").defaultRandom().primaryKey(),
