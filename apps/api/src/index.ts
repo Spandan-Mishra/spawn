@@ -173,6 +173,7 @@ app.post("/project/:projectId/chat", async (req, res) => {
         res.write(
           `data: ${JSON.stringify({ type: "tool_start", tool: toolName, input: data })}\n\n`,
         );
+        console.log(`${toolName} was used with input: ${data}`);
       } else if (event.event === "on_tool_end") {
         res.write(`data: ${JSON.stringify({ type: "tool_end" })}\n\n`);
       }
