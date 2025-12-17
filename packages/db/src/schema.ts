@@ -7,77 +7,68 @@ import {
   unique,
   integer,
   primaryKey,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { pgTable } from "drizzle-orm/pg-core";
 
 export const role = pgEnum("role", ["user", "assistant"]);
 export const messageType = pgEnum("message_type", ["text", "tool_call"]);
 
-export const users = pgTable("users", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: text("username"),
+export const user = pgTable("user", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: timestamp("email_verified"),
+  emailVerified: boolean("emailVerified").default(false).notNull(),
   image: text("image"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-export const accounts = pgTable(
-  "accounts",
-  {
-    userId: uuid("user_id")
-      .references(() => users.id, { onDelete: "cascade" })
-      .notNull(),
-    type: text("type").notNull(),
-    provider: text("provider").notNull(),
-    providerAccountId: text("provider_account_id").notNull(),
-    refreshToken: text("refresh_token"),
-    accessToken: text("access_token"),
-    expiresAt: integer("expires_at"),
-    tokenType: text("token_type"),
-    scope: text("scope"),
-    idToken: text("id_token"),
-    sessionState: text("session_state"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (a) => [
-    primaryKey({ columns: [a.provider, a.providerAccountId] }),
-  ],
-);
-
-export const sessions = pgTable("sessions", {
-  userId: uuid("user_id")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  sessionToken: text("session_token").notNull().unique(),
-  expires: timestamp("expires").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+export const account = pgTable("account", {
+	id: text("id").primaryKey(),
+	accountId: text("accountId").notNull(),
+	providerId: text("providerId").notNull(),
+	userId: text("userId").notNull().references(()=> user.id, { onDelete: "cascade" }),
+	accessToken: text("accessToken"),
+	refreshToken: text("refreshToken"),
+  accessTokenExpiresAt: timestamp("accessTokenExpiresAt"),
+  refreshTokenExpiresAt: timestamp("refreshTokenExpiresAt"),
+  scope: text("scope"),
+	idToken: text("idToken"),
+	password: text("password"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-export const verificationTokens = pgTable(
-  "verification_tokens",
-  {
-    identifier: text("identifier").notNull(),
-    token: text("token").notNull().unique(),
-    expires: timestamp("expires").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
-);
+export const session = pgTable("session", {
+	id: text("id").primaryKey(),
+  token: text("token").notNull().unique(),
+	expiresAt: timestamp("expiresAt").notNull(),
+	ipAddress: text("ipAddress"),
+	userAgent: text("userAgent"),
+	userId: text("userId").notNull().references(()=> user.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created").defaultNow().notNull(),
+  updatedAt: timestamp("updated").defaultNow().notNull(),
+});
+
+export const verification = pgTable("verification", {
+	id: text("id").primaryKey(),
+	identifier: text("identifier").notNull(),
+	value: text("value").notNull(),
+	expiresAt: timestamp("expiresAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
 
 export const projects = pgTable("projects", {
   id: uuid("id").defaultRandom().primaryKey(),
   description: text("description"),
   sandboxId: text("sandbox_id"),
-  userId: uuid("user_id")
-    .references(() => users.id, { onDelete: "cascade" })
+  userId: text("user_id")
+    .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const messages = pgTable("messages", {
@@ -86,10 +77,10 @@ export const messages = pgTable("messages", {
   role: role("role").notNull(),
   type: messageType("type").notNull(),
   projectId: uuid("project_id")
-    .references(() => projects.id)
+    .references(() => projects.id, { onDelete: "cascade" })
     .notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const files = pgTable(
@@ -101,50 +92,50 @@ export const files = pgTable(
     projectId: uuid("project_id")
       .references(() => projects.id, { onDelete: "cascade" })
       .notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
   (f) => [unique("unique_path_per_project").on(f.projectId, f.path)],
 );
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(user, ({ many }) => ({
   projects: many(projects),
-  accounts: many(accounts),
-  sessions: many(sessions),
+  accounts: many(account),
+  sessions: many(session),
 }));
 
-export const accountsRelations = relations(accounts, ({ one }) => ({
-  users: one(users, {
-    fields: [accounts.userId],
-    references: [users.id],
+export const accountsRelations = relations(account, ({ one }) => ({
+  user: one(user, {
+    fields: [account.userId],
+    references: [user.id],
   }),
 }));
 
-export const sessionsRelations = relations(sessions, ({ one }) => ({
-  users: one(users, {
-    fields: [sessions.userId],
-    references: [users.id],
+export const sessionsRelations = relations(session, ({ one }) => ({
+  user: one(user, {
+    fields: [session.userId],
+    references: [user.id],
   }),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
-  users: one(users, {
+  user: one(user, {
     fields: [projects.userId],
-    references: [users.id],
+    references: [user.id],
   }),
   files: many(files),
   messages: many(messages),
 }));
 
 export const messagesRelations = relations(messages, ({ one }) => ({
-  projects: one(projects, {
+  project: one(projects, {
     fields: [messages.projectId],
     references: [projects.id],
   }),
 }));
 
 export const filesRelations = relations(files, ({ one }) => ({
-  projects: one(projects, {
+  project: one(projects, {
     fields: [files.projectId],
     references: [projects.id],
   }),

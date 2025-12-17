@@ -1,14 +1,19 @@
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import {
-  users,
+  user,
   projects,
   messages,
   files,
+  account,
+  session,
+  verification,
   usersRelations,
   projectsRelations,
   messagesRelations,
   filesRelations,
+  accountsRelations,
+  sessionsRelations,
 } from "./schema";
 
 const connectionString = process.env.DATABASE_URL;
@@ -26,26 +31,36 @@ if (process.env.NODE_ENV !== "production") globalForDb.conn = pool;
 
 export const db = drizzle(pool, {
   schema: {
-    users,
+    user,
     projects,
     messages,
     files,
+    account,
+    session,
+    verification,
     usersRelations,
     projectsRelations,
     messagesRelations,
     filesRelations,
+    accountsRelations,
+    sessionsRelations,
   },
 });
 
 export {
-  users,
+  user,
   projects,
   messages,
   files,
+  account,
+  session,
+  verification,
   usersRelations,
   projectsRelations,
   messagesRelations,
   filesRelations,
+  accountsRelations,
+  sessionsRelations,
 };
 
 export { eq, and, or, not, desc, asc } from "drizzle-orm";

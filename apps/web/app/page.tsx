@@ -8,9 +8,9 @@ import { motion, Variants } from "framer-motion";
 import { TypingAnimation } from "@/components/ui/typing-animation";
 import { FloatingPaths } from "@/components/ui/background-paths";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
-import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { authClient } from "@/lib/auth-client";
 
 const placeholderPrompts = [
   "Build a solitaire game with a green background...",
@@ -49,7 +49,7 @@ export default function LandingPage() {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const router = useRouter();
 
   const handleSpawn = async () => {
@@ -80,6 +80,23 @@ export default function LandingPage() {
     }
   };
 
+  const handleSignIn = async (provider: 'github' | 'google') => {
+      await authClient.signIn.social({
+          provider: provider,
+          callbackURL: "/"
+      });
+  };
+
+  const handleSignOut = async () => {
+      await authClient.signOut({
+          fetchOptions: {
+              onSuccess: () => {
+                  router.refresh();
+              }
+          }
+      });
+  };
+
   return (
     <div className="min-h-screen bg-zinc-950 font-primary flex flex-col items-center justify-center text-zinc-100 p-4 overflow-hidden relative">
       <div className="absolute inset-0 z-0">
@@ -95,8 +112,8 @@ export default function LandingPage() {
             </span>
             <Button
                 variant="ghost" 
-                onClick={() => signOut()} 
-                className="hover:bg-zinc-800 text-zinc-300"
+                onClick={() => handleSignOut()} 
+                className="hover:bg-zinc-800 hover:text-zinc-200"
             >
                 Sign Out
             </Button>
@@ -125,7 +142,7 @@ export default function LandingPage() {
 
           <Button 
               variant="outline" 
-              onClick={() => signIn("google")}
+              onClick={() => handleSignIn("google")}
               className="w-full h-11 bg-zinc-900 border-zinc-800 hover:bg-zinc-800 hover:text-white text-zinc-300 justify-center relative px-10"
           >
               <svg className="h-5 w-5 absolute left-26" viewBox="0 0 24 24">
@@ -139,7 +156,7 @@ export default function LandingPage() {
 
           <Button 
               variant="outline" 
-              onClick={() => signIn("github")}
+              onClick={() => handleSignIn("github")}
               className="w-full h-11 bg-zinc-900 border-zinc-800 hover:bg-zinc-800 hover:text-white text-zinc-300 justify-center relative px-10"
           >
               <Github className="h-5 w-5 absolute left-26" />
