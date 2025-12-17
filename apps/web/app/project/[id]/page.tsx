@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { File, getFiles, startSandbox } from "../../../lib/api";
+import { File, getFiles, heartbeat, startSandbox } from "../../../lib/api";
 import { Editor } from "@monaco-editor/react";
 import { FileExplorer } from "@/components/ui/file-explorer";
 import Chat from "@/components/chat";
@@ -55,6 +55,22 @@ export default function Page({ params }: { params: Promise<Params> }) {
       setShowLoader(true);
     }
   }, [status]);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const heartbeatUrl = await heartbeat({ projectId: id });
+
+        if(heartbeatUrl !== sandboxUrl) {
+          setSandboxUrl(heartbeatUrl);
+        }
+      } catch (error) {
+        console.error("Failed to perform heartbeat functionality: ", error);
+      }
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [id, sandboxUrl]);
 
   const handleFileSelect = (filePath: string) => {
     const file = files.find((f) => f.path === filePath);

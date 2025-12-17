@@ -64,4 +64,9 @@ const streamChat = async (projectId: string, payload: string) => {
   return response;
 };
 
-export { getFiles, startSandbox, createProject, streamChat };
+const heartbeat = async({ projectId }: { projectId: string }) => {
+  const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${projectId}/heartbeat`);
+  return response.data;
+}
+
+export { getFiles, startSandbox, createProject, streamChat, heartbeat };

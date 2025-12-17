@@ -61,23 +61,24 @@ app.post("/project/:projectId/startSandbox", async (req, res) => {
   res.json(publicUrl);
 });
 
-app.post("project/:projectId/heartbeat", async (req, res) => {
+app.post("/project/:projectId/heartbeat", async (req, res) => {
   const { projectId } = req.params;
 
-  const sandboxId = await db.select().from(projects).where(eq(projects.id, projectId)).then(r => r[0].sandboxId);
-
   try {
-    if (!sandboxId) {
+    const project = await db.select().from(projects).where(eq(projects.id, projectId)).then(r => r[0]);
+
+
+    if (!project || !project.sandboxId) {
       throw new Error("SandboxId doesn't exist");
     }
 
-    const sandbox = await Sandbox.connect(sandboxId);
+    const sandbox = await Sandbox.connect(project.sandboxId);
     sandbox.setTimeout(5 * 60 * 1000);
 
-    return sandbox.getHost(5173);
+    res.json(sandbox.getHost(5173));
   } catch (error) {
-    const sandboxUrl = await createSandbox({ projectId });
-    return sandboxUrl;
+    const newUrl = await createSandbox({ projectId });
+    res.json(newUrl);
   }
 })
 
