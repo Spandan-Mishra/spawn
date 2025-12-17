@@ -157,7 +157,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
                 ) : (
                   <ResizablePanelGroup
                     direction="horizontal"
-                    className="h-full pt-[70px]" // Push content down
+                    className="h-full pt-[70px]"
                   >
                     <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
                       <FileExplorer

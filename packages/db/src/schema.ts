@@ -25,37 +25,41 @@ export const user = pgTable("user", {
 });
 
 export const account = pgTable("account", {
-	id: text("id").primaryKey(),
-	accountId: text("accountId").notNull(),
-	providerId: text("providerId").notNull(),
-	userId: text("userId").notNull().references(()=> user.id, { onDelete: "cascade" }),
-	accessToken: text("accessToken"),
-	refreshToken: text("refreshToken"),
+  id: text("id").primaryKey(),
+  accountId: text("accountId").notNull(),
+  providerId: text("providerId").notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  accessToken: text("accessToken"),
+  refreshToken: text("refreshToken"),
   accessTokenExpiresAt: timestamp("accessTokenExpiresAt"),
   refreshTokenExpiresAt: timestamp("refreshTokenExpiresAt"),
   scope: text("scope"),
-	idToken: text("idToken"),
-	password: text("password"),
+  idToken: text("idToken"),
+  password: text("password"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const session = pgTable("session", {
-	id: text("id").primaryKey(),
+  id: text("id").primaryKey(),
   token: text("token").notNull().unique(),
-	expiresAt: timestamp("expiresAt").notNull(),
-	ipAddress: text("ipAddress"),
-	userAgent: text("userAgent"),
-	userId: text("userId").notNull().references(()=> user.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expiresAt").notNull(),
+  ipAddress: text("ipAddress"),
+  userAgent: text("userAgent"),
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("created").defaultNow().notNull(),
   updatedAt: timestamp("updated").defaultNow().notNull(),
 });
 
 export const verification = pgTable("verification", {
-	id: text("id").primaryKey(),
-	identifier: text("identifier").notNull(),
-	value: text("value").notNull(),
-	expiresAt: timestamp("expiresAt").notNull(),
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
