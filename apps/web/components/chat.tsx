@@ -1,4 +1,4 @@
-import { streamChat } from "@/lib/api";
+import { loadHistory, streamChat } from "@/lib/api";
 import { parseStream } from "@/lib/stream";
 import { ArrowUpRight, Loader2, Terminal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -14,10 +14,12 @@ const Chat = ({
   projectId,
   onFilesUpdate,
   onStreamFinished,
+  onStreamStart,
 }: {
   projectId: string;
   onFilesUpdate: () => void;
   onStreamFinished?: () => void;
+  onStreamStart?: () => void;
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -25,6 +27,7 @@ const Chat = ({
   const [toolCall, setToolCall] = useState<string | null>(null);
   const [hasTriggered, setHasTriggered] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isHistoryLoaded, setIsHistoryLoaded] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,7 +35,7 @@ const Chat = ({
   }, [messages, toolCall]);
 
   useEffect(() => {
-    if (hasTriggered || messages.length > 0) return;
+    if (hasTriggered || messages.length > 0 || !isHistoryLoaded) return;
 
     const init = async () => {
       try {
@@ -51,12 +54,28 @@ const Chat = ({
     };
 
     init();
-  }, []);
+  }, [isHistoryLoaded, hasTriggered, messages]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const history = await loadHistory({ projectId });
+        setMessages(history);
+        setIsHistoryLoaded(true);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetch();
+  }, [projectId]);
 
   const sendMessage = async (msgContent?: string) => {
     const content = msgContent || input;
 
     if (!content.trim() || isLoading) return;
+
+    if(onStreamStart) onStreamStart();
 
     const userMessage: Message = { role: "user", content };
     setMessages((prev) => [...prev, userMessage]);

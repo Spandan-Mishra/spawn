@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/resizable";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { StepsLoader } from "@/components/stepsLoader";
-import { Code2, Eye, Laptop } from "lucide-react";
+import { Code2, Eye, Laptop, Loader2 } from "lucide-react";
 
 type Params = { id: string };
 
@@ -26,6 +26,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
   const [activeTab, setActiveTab] = useState<"preview" | "code">("preview");
   const [selectedFile, setSelectedFile] = useState<string>("src/App.tsx");
   const [showLoader, setShowLoader] = useState<boolean>(true);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   const refetchFiles = async () => {
     const filesData = await getFiles({ projectId: id });
@@ -48,7 +49,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
     if (status === "ready") {
       const timer = setTimeout(() => {
         setShowLoader(false);
-      }, 10000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     } else {
@@ -79,7 +80,13 @@ export default function Page({ params }: { params: Promise<Params> }) {
     }
   };
 
+  const handleGenerationStart = async () => {
+    setIsUpdating(true);
+  }
+
   const handleGenerationComplete = async () => {
+    setIsUpdating(false);
+
     if (status === "ready") return;
     setStatus("booting");
     try {
@@ -104,6 +111,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
             projectId={id}
             onFilesUpdate={refetchFiles}
             onStreamFinished={handleGenerationComplete}
+            onStreamStart={handleGenerationStart}
           />
         </ResizablePanel>
 
@@ -146,6 +154,15 @@ export default function Page({ params }: { params: Promise<Params> }) {
               <div className="absolute inset-0 z-50 bg-zinc-950 flex items-center justify-center">
                 <StepsLoader currentStep={status} />
               </div>
+            )}
+
+            {isUpdating && status === 'ready' && (
+               <div className="absolute inset-0 z-40 bg-zinc-950/50 backdrop-blur-[2px] flex items-center justify-center transition-all duration-300">
+                  <div className="bg-zinc-900 border border-zinc-800 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
+                      <Loader2 className="w-5 h-5 text-green-500 animate-spin" />
+                      <span className="text-sm font-medium text-zinc-200">Updating application...</span>
+                  </div>
+               </div>
             )}
 
             <div className="h-full w-full">

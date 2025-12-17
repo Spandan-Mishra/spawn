@@ -1,6 +1,6 @@
 import express from "express";
 import "dotenv/config";
-import { db, projects, files, eq, messages } from "@repo/db";
+import { db, projects, files, eq, messages, asc } from "@repo/db";
 import { BASE_TEMPLATE } from "./base-template";
 import createSandbox from "./services/sandbox";
 import cors from "cors";
@@ -95,6 +95,18 @@ app.get("/project/:projectId/files", async (req, res) => {
 
   res.json(filesToDisplay);
 });
+
+app.get("/project/:projectId/messages", async (req, res) => {
+  const { projectId } = req.params;
+
+  try {
+    const history = await db.select().from(messages).where(eq(messages.projectId, projectId)).orderBy(asc(messages.createdAt));
+
+    res.json(history);
+  } catch (error) {
+    res.status(400).json(error);
+  }
+})
 
 app.post("/project/:projectId/chat", async (req, res) => {
   const { projectId } = req.params;

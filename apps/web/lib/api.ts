@@ -69,4 +69,9 @@ const heartbeat = async({ projectId }: { projectId: string }) => {
   return response.data;
 }
 
-export { getFiles, startSandbox, createProject, streamChat, heartbeat };
+const loadHistory = async({ projectId }: { projectId: string }) => {
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${projectId}/messages`);
+  return response.data;
+}
+
+export { getFiles, startSandbox, createProject, streamChat, heartbeat, loadHistory };
