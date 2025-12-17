@@ -1,6 +1,6 @@
 import express from "express";
 import "dotenv/config";
-import { db, projects, files, eq, users, messages } from "@repo/db";
+import { db, projects, files, eq, messages } from "@repo/db";
 import { BASE_TEMPLATE } from "./base-template";
 import createSandbox from "./services/sandbox";
 import cors from "cors";
@@ -12,29 +12,12 @@ import {
 import { SYSTEM_PROMPT } from "./ai/prompt";
 import createAgentGraph from "./ai/graph";
 import { model } from "./ai/model";
+import Sandbox from "@e2b/code-interpreter";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.post("/signup", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    const [user] = await db
-      .insert(users)
-      .values({
-        username,
-        password,
-      })
-      .returning();
-
-    res.json({ userId: user.id });
-  } catch (error) {
-    console.error(error);
-    res.json({ error });
-  }
-});
 
 app.post("/project", async (req, res) => {
   const { prompt, userId } = req.body;
@@ -77,6 +60,26 @@ app.post("/project/:projectId/startSandbox", async (req, res) => {
 
   res.json(publicUrl);
 });
+
+app.post("project/:projectId/heartbeat", async (req, res) => {
+  const { projectId } = req.params;
+
+  const sandboxId = await db.select().from(projects).where(eq(projects.id, projectId)).then(r => r[0].sandboxId);
+
+  try {
+    if (!sandboxId) {
+      throw new Error("SandboxId doesn't exist");
+    }
+
+    const sandbox = await Sandbox.connect(sandboxId);
+    sandbox.setTimeout(5 * 60 * 1000);
+
+    return sandbox.getHost(5173);
+  } catch (error) {
+    const sandboxUrl = await createSandbox({ projectId });
+    return sandboxUrl;
+  }
+})
 
 app.get("/project/:projectId/files", async (req, res) => {
   const { projectId } = req.params;
