@@ -206,6 +206,7 @@ export default function LandingPage() {
                   deleteSpeed={10}
                   pauseDelay={1500}
                   loop
+                  startOnView={false}
                 />
               </div>
             )}
