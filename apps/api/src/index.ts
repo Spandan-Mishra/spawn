@@ -13,6 +13,7 @@ import { SYSTEM_PROMPT } from "./ai/prompt";
 import createAgentGraph from "./ai/graph";
 import { model } from "./ai/model";
 import Sandbox from "@e2b/code-interpreter";
+import AdmZip from "adm-zip";
 
 const app = express();
 app.use(express.json());
@@ -202,6 +203,26 @@ app.post("/project/:projectId/chat", async (req, res) => {
     res.end();
   }
 });
+
+app.get("/project/:projectId/download", async (req, res) => {
+  const { projectId } = req.params;
+
+  const filesToDownload = await db.select().from(files).where(eq(files.projectId, projectId));
+
+  const zip = new AdmZip();
+
+  filesToDownload.forEach(file => {
+    zip.addFile(file.path, file.content);
+  })
+
+  const buffer = zip.toBuffer();
+
+  res.setHeader("Content-Type", "application/zip");
+  res.setHeader("Content-Disposition", "attachment; filename='project.zip'");
+  res.setHeader("Content-Length", buffer.length);
+
+  res.json(buffer);
+})
 
 app.listen(3001, () => {
   console.log("Spawn Backend started on port 3001");

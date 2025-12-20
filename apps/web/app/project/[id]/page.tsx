@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/resizable";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { StepsLoader } from "@/components/stepsLoader";
-import { Code2, Eye, Laptop, Loader2 } from "lucide-react";
+import { Code2, Download, Eye, Laptop, Loader2 } from "lucide-react";
 
 type Params = { id: string };
 
@@ -121,33 +121,41 @@ export default function Page({ params }: { params: Promise<Params> }) {
         <ResizablePanel defaultSize={75}>
           <div className="h-full w-full relative">
             {status === "ready" && (
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
-                <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-full shadow-xl">
-                  <ToggleGroup
-                    type="single"
-                    value={activeTab}
-                    onValueChange={(value) =>
-                      value && setActiveTab(value as "preview" | "code")
-                    }
-                    className="flex"
-                  >
-                    <ToggleGroupItem
-                      value="preview"
-                      className="px-4 py-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 data-[state=on]:bg-zinc-800 data-[state=on]:text-green-400 transition-all flex items-center gap-2"
+              <>
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
+                  <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-full shadow-xl">
+                    <ToggleGroup
+                      type="single"
+                      value={activeTab}
+                      onValueChange={(value) =>
+                        value && setActiveTab(value as "preview" | "code")
+                      }
+                      className="flex"
                     >
-                      <Eye className="w-4 h-4" />
-                      <span className="text-xs font-medium">Preview</span>
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                      value="code"
-                      className="px-4 py-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 data-[state=on]:bg-zinc-800 data-[state=on]:text-green-400 transition-all flex items-center gap-2"
-                    >
-                      <Code2 className="w-4 h-4" />
-                      <span className="text-xs font-medium">Code</span>
-                    </ToggleGroupItem>
-                  </ToggleGroup>
+                      <ToggleGroupItem
+                        value="preview"
+                        className="px-4 py-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 data-[state=on]:bg-zinc-800 data-[state=on]:text-green-400 transition-all flex items-center gap-2"
+                      >
+                        <Eye className="w-4 h-4" />
+                        <span className="text-xs font-medium">Preview</span>
+                      </ToggleGroupItem>
+                      <ToggleGroupItem
+                        value="code"
+                        className="px-4 py-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 data-[state=on]:bg-zinc-800 data-[state=on]:text-green-400 transition-all flex items-center gap-2"
+                      >
+                        <Code2 className="w-4 h-4" />
+                        <span className="text-xs font-medium">Code</span>
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </div>
                 </div>
-              </div>
+                <div className="absolute top-4 right-4 z-20">
+                  <a href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${id}/download`} target="_blank" className="px-4 py-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 data-[state=on]:bg-zinc-800 data-[state=on]:text-green-400 transition-all flex items-center gap-2 justify-end">
+                    <Download className="w-4 h-4" />
+                    <span className="text-xs font-medium">Download</span>
+                  </a>
+                </div>
+              </>
             )}
 
             {showLoader && (
