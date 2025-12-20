@@ -1,7 +1,7 @@
 import { Message } from "./chat";
 import ReactMarkdown from "react-markdown";
 
-const MessageBubble = ({ message }: { message: Message }) => {
+const MessageBubble = ({ message, onFileOpen }: { message: Message; onFileOpen?: (path: string) => void }) => {
   if (!message.content) return null;
 
   const isUser = message.role === "user";
@@ -19,7 +19,30 @@ const MessageBubble = ({ message }: { message: Message }) => {
           <div className="whitespace-pre-wrap">{message.content}</div>
         ) : (
           <div className="prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-zinc-800 prose-pre:rounded-lg">
-            <ReactMarkdown>{message.content}</ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                code: ({ node, className, children, ...props }) => {
+                  const text = String(children).replace(/\n$/, "");
+                  const isFile = /^[a-zA-Z0-9_\-\/]+\.[a-zA-Z0-9]+$/.test(text);
+
+                  if (isFile) {
+                    return (
+                      <code className="cursor-pointer text-green-400 hover:underline" onClick={() => onFileOpen && onFileOpen(text)}>
+                        {children}
+                      </code>
+                    )
+                  }
+
+                  return (
+                    <code className={className} {...props}>
+                      {children}
+                    </code>
+                  );
+                }
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
           </div>
         )}
       </div>

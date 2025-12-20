@@ -15,11 +15,13 @@ const Chat = ({
   onFilesUpdate,
   onStreamFinished,
   onStreamStart,
+  onFileOpen,
 }: {
   projectId: string;
   onFilesUpdate: () => void;
   onStreamFinished?: () => void;
   onStreamStart?: () => void;
+  onFileOpen?: (path: string) => void;
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -150,10 +152,9 @@ const Chat = ({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {messages.map((msg, index) => (
-          <MessageBubble key={index} message={msg} />
+          <MessageBubble key={index} message={msg} onFileOpen={onFileOpen} />
         ))}
 
-        {/* Loading / Tool Status Indicator */}
         {(isLoading || toolCall) && (
           <div className="flex items-center gap-3 text-zinc-400 text-xs animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="h-8 w-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">

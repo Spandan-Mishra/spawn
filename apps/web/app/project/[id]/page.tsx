@@ -78,6 +78,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
     if (file) {
       setSelectedFile(filePath);
     }
+    console.log(file);
   };
 
   const handleGenerationStart = async () => {
@@ -98,6 +99,16 @@ export default function Page({ params }: { params: Promise<Params> }) {
     }
   };
 
+  const handleFileOpen = (path: string) => {
+    if(files.find((f) => f.path.includes(path))) {
+      setActiveTab("code");
+      setSelectedFile(files.find((f) => f.path.includes(path))!.path);
+      return;
+    } else {
+      console.error("File not found");
+    }
+  }
+
   return (
     <div className="h-screen flex overflow-hidden bg-zinc-950 text-zinc-100 font-sans">
       <ResizablePanelGroup direction="horizontal">
@@ -112,6 +123,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
             onFilesUpdate={refetchFiles}
             onStreamFinished={handleGenerationComplete}
             onStreamStart={handleGenerationStart}
+            onFileOpen={handleFileOpen}
           />
         </ResizablePanel>
 
