@@ -44,17 +44,28 @@ const createSandbox = async ({ projectId }: { projectId: string }) => {
       .from(files)
       .where(eq(files.projectId, projectId));
 
-    await Promise.all(
-      filesToWrite.map(async (file) => {
-        const dir = file.path.split("/").slice(0, -1).join("/");
-
-        if (dir && dir !== ".") {
-          await sandbox!.files.makeDir(dir);
+    const uniqueDirs = new Set<string>();
+    filesToWrite.forEach(file => {
+        const parts = file.path.split('/');
+        if (parts.length > 1) {
+            const dir = parts.slice(0, -1).join('/');
+            uniqueDirs.add(dir);
         }
+    });
 
-        await sandbox!.files.write(file.path, file.content);
-      }),
-    );
+    const sortedDirs = Array.from(uniqueDirs).sort((a, b) => a.length - b.length);
+
+    for (const dir of sortedDirs) {
+        try {
+            await sandbox.files.makeDir(dir);
+        } catch (e) {}
+    }
+
+    await Promise.all(filesToWrite.map(async (file) => {
+        if (file.content) {
+            await sandbox!.files.write(file.path, file.content);
+        }
+    }));
 
     await sandbox.commands.run("npm install");
 
