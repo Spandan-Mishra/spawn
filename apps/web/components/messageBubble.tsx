@@ -1,5 +1,6 @@
 import { Message } from "./chat";
 import ReactMarkdown from "react-markdown";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const MessageBubble = ({ message, onFileOpen }: { message: Message; onFileOpen?: (path: string) => void }) => {
   if (!message.content) return null;
@@ -27,9 +28,16 @@ const MessageBubble = ({ message, onFileOpen }: { message: Message; onFileOpen?:
 
                   if (isFile) {
                     return (
-                      <code className="cursor-pointer text-green-400 hover:underline" onClick={() => onFileOpen && onFileOpen(text)}>
-                        {children}
-                      </code>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <code className="cursor-pointer text-green-400 hover:underline" onClick={() => onFileOpen && onFileOpen(text)}>
+                            {children}
+                          </code>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <span>Open <code>{text}</code> in code editor</span>
+                        </TooltipContent>
+                      </Tooltip>
                     )
                   }
 

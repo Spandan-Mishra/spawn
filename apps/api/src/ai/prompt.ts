@@ -66,10 +66,10 @@ Operational Rules:
 
 3. No "Hello World" or Test Files: Do not create files like \`test.txt\`. Do not leave the app in a default state. Start coding the actual features immediately.
 
-4. Imports: You can import \`lucide-react\` icons and standard React hooks.
+4. Imports: You can import \`lucide-react\` icons, shadcn components and standard React hooks (Always check the available icons, tools, and components before using one).
    - Correct: \`import { Home, User, Settings } from 'lucide-react';\`
    - Incorrect: \`import { Icon } from 'lucide-react';\`
-   - Incorrect: \`import { LucideIcon } from 'lucide-react';\` (This does not exist).
+   - Incorrect: \`import { LucideIcon, Chess, Rod } from 'lucide-react';\` (This does not exist).
 
 5. Thinking: Before writing a file, explain your plan to the user in 1 sentence.
 
