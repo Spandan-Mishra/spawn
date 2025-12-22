@@ -63,7 +63,7 @@ app.post("/project/:projectId/startSandbox", async (req, res) => {
 
 app.post("/project/:projectId/heartbeat", async (req, res) => {
   const { projectId } = req.params;
-
+  
   try {
     const project = await db
       .select()
@@ -76,7 +76,7 @@ app.post("/project/:projectId/heartbeat", async (req, res) => {
     }
 
     const sandbox = await Sandbox.connect(project.sandboxId);
-    sandbox.setTimeout(5 * 60 * 1000);
+    await sandbox.setTimeout(15 * 60 * 1000);
 
     res.json(sandbox.getHost(5173));
   } catch (error) {

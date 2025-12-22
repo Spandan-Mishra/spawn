@@ -34,16 +34,29 @@ export default function Page({ params }: { params: Promise<Params> }) {
   };
 
   useEffect(() => {
-    const fetch = async () => {
+    const init = async () => {
       try {
-        await refetchFiles();
+        const filesData = await getFiles({ projectId: id });
+        setFiles(filesData);
+
+        if (filesData.length > 0) {
+          setStatus("booting");
+          
+          try {
+            const url = await startSandbox({ projectId: id });
+            setSandboxUrl(url);
+            setStatus("ready");
+          } catch (e) {
+            console.error("Error booting sandbox for existing project", e);
+          }
+        } 
       } catch (error) {
         console.error("Failed to load the project:", error);
       }
     };
 
-    fetch();
-  }, []);
+    init();
+  }, [id]);
 
   useEffect(() => {
     if (status === "ready") {
@@ -70,7 +83,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
           console.error("Failed to perform heartbeat functionality: ", error);
         }
       },
-      5 * 60 * 1000,
+      4 * 60 * 1000,
     );
 
     return () => clearInterval(interval);
