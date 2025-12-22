@@ -251,85 +251,165 @@ export function cn(...inputs: ClassValue[]) {
 /* THEME VARIABLES */
 
 @layer utilities {
-  
-  /* THEME: ROSE (Soft Pink/Red) */
+  /* ROSE: Deep Maroon Background + Hot Pink Accents */
   .theme-rose {
+    --background: 350 40% 4%; /* Tinted Black */
+    --foreground: 350 10% 98%;
+    --card: 350 30% 6%;
+    --card-foreground: 350 10% 98%;
+    --popover: 350 30% 6%;
+    --popover-foreground: 350 10% 98%;
     --primary: 346.8 77.2% 49.8%;
     --primary-foreground: 355.7 100% 97.3%;
-    --ring: 346.8 77.2% 49.8%;
-  }
-  .dark .theme-rose {
-    --primary: 346.8 77.2% 49.8%;
-    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 350 20% 12%;
+    --secondary-foreground: 350 10% 98%;
+    --muted: 350 20% 12%;
+    --muted-foreground: 350 10% 60%;
+    --accent: 350 20% 12%;
+    --accent-foreground: 350 10% 98%;
+    --border: 350 20% 12%;
+    --input: 350 20% 12%;
     --ring: 346.8 77.2% 49.8%;
   }
 
-  /* THEME: BLUE (Corporate/Tech) */
+  /* BLUE: Deep Navy Background + Electric Blue Accents */
   .theme-blue {
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --ring: 221.2 83.2% 53.3%;
-  }
-  .dark .theme-blue {
+    --background: 220 40% 4%;
+    --foreground: 220 10% 98%;
+    --card: 220 30% 6%;
+    --card-foreground: 220 10% 98%;
+    --popover: 220 30% 6%;
+    --popover-foreground: 220 10% 98%;
     --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 20% 12%;
+    --secondary-foreground: 220 10% 98%;
+    --muted: 220 20% 12%;
+    --muted-foreground: 220 10% 60%;
+    --accent: 220 20% 12%;
+    --accent-foreground: 220 10% 98%;
+    --border: 220 20% 12%;
+    --input: 220 20% 12%;
     --ring: 217.2 91.2% 59.8%;
   }
 
-  /* THEME: GREEN (Nature/Finance) */
+  /* GREEN: Deep Forest Background + Emerald Accents */
   .theme-green {
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --ring: 142.1 76.2% 36.3%;
-  }
-  .dark .theme-green {
+    --background: 150 40% 3%;
+    --foreground: 150 10% 98%;
+    --card: 150 30% 5%;
+    --card-foreground: 150 10% 98%;
+    --popover: 150 30% 5%;
+    --popover-foreground: 150 10% 98%;
     --primary: 142.1 70.6% 45.3%;
     --primary-foreground: 144.9 80.4% 10%;
+    --secondary: 150 20% 10%;
+    --secondary-foreground: 150 10% 98%;
+    --muted: 150 20% 10%;
+    --muted-foreground: 150 10% 60%;
+    --accent: 150 20% 10%;
+    --accent-foreground: 150 10% 98%;
+    --border: 150 20% 10%;
+    --input: 150 20% 10%;
     --ring: 142.1 70.6% 45.3%;
   }
 
-  /* THEME: ORANGE (Warm/Creative) */
+  /* ORANGE: Warm Espresso Background + Amber Accents */
   .theme-orange {
-    --primary: 24.6 95% 53.1%;
-    --primary-foreground: 60 9.1% 97.8%;
-    --ring: 24.6 95% 53.1%;
-  }
-  .dark .theme-orange {
+    --background: 20 40% 4%;
+    --foreground: 20 10% 98%;
+    --card: 20 30% 6%;
+    --card-foreground: 20 10% 98%;
+    --popover: 20 30% 6%;
+    --popover-foreground: 20 10% 98%;
     --primary: 20.5 90.2% 48.2%;
     --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 20 20% 12%;
+    --secondary-foreground: 20 10% 98%;
+    --muted: 20 20% 12%;
+    --muted-foreground: 20 10% 60%;
+    --accent: 20 20% 12%;
+    --accent-foreground: 20 10% 98%;
+    --border: 20 20% 12%;
+    --input: 20 20% 12%;
     --ring: 20.5 90.2% 48.2%;
   }
 
-  /* THEME: VIOLET (Elegant/SaaS) */
+  /* VIOLET: Deep Void Background + Neon Purple Accents */
   .theme-violet {
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 40% 98%;
-    --ring: 262.1 83.3% 57.8%;
-  }
-  .dark .theme-violet {
+    --background: 260 40% 4%;
+    --foreground: 260 10% 98%;
+    --card: 260 30% 6%;
+    --card-foreground: 260 10% 98%;
+    --popover: 260 30% 6%;
+    --popover-foreground: 260 10% 98%;
     --primary: 263.4 70% 50.4%;
     --primary-foreground: 210 40% 98%;
+    --secondary: 260 20% 12%;
+    --secondary-foreground: 260 10% 98%;
+    --muted: 260 20% 12%;
+    --muted-foreground: 260 10% 60%;
+    --accent: 260 20% 12%;
+    --accent-foreground: 260 10% 98%;
+    --border: 260 20% 12%;
+    --input: 260 20% 12%;
     --ring: 263.4 70% 50.4%;
   }
 
-  /* THEME: YELLOW (Bold/Warning) */
+  /* YELLOW: Deep Charcoal Background + Gold Accents */
   .theme-yellow {
+    --background: 45 10% 4%;
+    --foreground: 45 10% 98%;
+    --card: 45 10% 6%;
+    --card-foreground: 45 10% 98%;
+    --popover: 45 10% 6%;
+    --popover-foreground: 45 10% 98%;
     --primary: 47.9 95.8% 53.1%;
     --primary-foreground: 26 83.3% 14.1%;
+    --secondary: 45 10% 12%;
+    --secondary-foreground: 45 10% 98%;
+    --muted: 45 10% 12%;
+    --muted-foreground: 45 10% 60%;
+    --accent: 45 10% 12%;
+    --accent-foreground: 45 10% 98%;
+    --border: 45 10% 12%;
+    --input: 45 10% 12%;
     --ring: 47.9 95.8% 53.1%;
   }
-  .dark .theme-yellow {
-    --primary: 47.9 95.8% 53.1%;
-    --primary-foreground: 26 83.3% 14.1%;
-    --ring: 47.9 95.8% 53.1%;
-  }
+}
 
-  /* UTILITY PATTERNS */
+/* DEFAULT (Fallback) - Neutral Zinc */
+:root {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground antialiased font-sans; }
+}
+
+@layer utilities {
   .bg-grid-black { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(0 0 0 / 0.04)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e"); }
   .bg-grid-white { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.04)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e"); }
-  .bg-dot-black { background-image: radial-gradient(rgb(0 0 0 / 0.1) 1px, transparent 1px); background-size: 20px 20px; }
-  .bg-dot-white { background-image: radial-gradient(rgb(255 255 255 / 0.1) 1px, transparent 1px); background-size: 20px 20px; }
-  .bg-noise { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"); }
 }
   `.trim(),
 
