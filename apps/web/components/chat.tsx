@@ -67,7 +67,7 @@ const Chat = ({
       } catch (error) {
         console.error(error);
       }
-    }
+    };
 
     fetch();
   }, [projectId]);
@@ -77,7 +77,7 @@ const Chat = ({
 
     if (!content.trim() || isLoading) return;
 
-    if(onStreamStart) onStreamStart();
+    if (onStreamStart) onStreamStart();
 
     const userMessage: Message = { role: "user", content };
     setMessages((prev) => [...prev, userMessage]);

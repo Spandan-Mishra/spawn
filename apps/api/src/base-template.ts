@@ -45,37 +45,45 @@ export const BASE_TEMPLATE = {
     2,
   ),
 
-  "tsconfig.json": JSON.stringify({
-    "compilerOptions": {
-      "target": "ES2020",
-      "useDefineForClassFields": true,
-      "lib": ["ES2020", "DOM", "DOM.Iterable"],
-      "module": "ESNext",
-      "skipLibCheck": true,
-      "moduleResolution": "bundler",
-      "allowImportingTsExtensions": true,
-      "resolveJsonModule": true,
-      "isolatedModules": true,
-      "noEmit": true,
-      "jsx": "react-jsx",
-      "strict": true,
-      "baseUrl": ".",
-      "paths": { "@/*": ["./src/*"] }
+  "tsconfig.json": JSON.stringify(
+    {
+      compilerOptions: {
+        target: "ES2020",
+        useDefineForClassFields: true,
+        lib: ["ES2020", "DOM", "DOM.Iterable"],
+        module: "ESNext",
+        skipLibCheck: true,
+        moduleResolution: "bundler",
+        allowImportingTsExtensions: true,
+        resolveJsonModule: true,
+        isolatedModules: true,
+        noEmit: true,
+        jsx: "react-jsx",
+        strict: true,
+        baseUrl: ".",
+        paths: { "@/*": ["./src/*"] },
+      },
+      include: ["src"],
+      references: [{ path: "./tsconfig.node.json" }],
     },
-    "include": ["src"],
-    "references": [{ "path": "./tsconfig.node.json" }]
-  }, null, 2),
+    null,
+    2,
+  ),
 
-  "tsconfig.node.json": JSON.stringify({
-    "compilerOptions": {
-      "composite": true,
-      "skipLibCheck": true,
-      "module": "ESNext",
-      "moduleResolution": "bundler",
-      "allowSyntheticDefaultImports": true
+  "tsconfig.node.json": JSON.stringify(
+    {
+      compilerOptions: {
+        composite: true,
+        skipLibCheck: true,
+        module: "ESNext",
+        moduleResolution: "bundler",
+        allowSyntheticDefaultImports: true,
+      },
+      include: ["vite.config.ts"],
     },
-    "include": ["vite.config.ts"]
-  }, null, 2),
+    null,
+    2,
+  ),
 
   "vite.config.ts": `
 import { defineConfig } from 'vite'
@@ -744,5 +752,5 @@ export default function App() {
     </div>
   )
 }
-  `.trim()
+  `.trim(),
 };

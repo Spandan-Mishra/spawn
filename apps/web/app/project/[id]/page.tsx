@@ -58,17 +58,20 @@ export default function Page({ params }: { params: Promise<Params> }) {
   }, [status]);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        const heartbeatUrl = await heartbeat({ projectId: id });
+    const interval = setInterval(
+      async () => {
+        try {
+          const heartbeatUrl = await heartbeat({ projectId: id });
 
-        if(heartbeatUrl !== sandboxUrl) {
-          setSandboxUrl(heartbeatUrl);
+          if (heartbeatUrl !== sandboxUrl) {
+            setSandboxUrl(heartbeatUrl);
+          }
+        } catch (error) {
+          console.error("Failed to perform heartbeat functionality: ", error);
         }
-      } catch (error) {
-        console.error("Failed to perform heartbeat functionality: ", error);
-      }
-    }, 5 * 60 * 1000);
+      },
+      5 * 60 * 1000,
+    );
 
     return () => clearInterval(interval);
   }, [id, sandboxUrl]);
@@ -83,7 +86,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
 
   const handleGenerationStart = async () => {
     setIsUpdating(true);
-  }
+  };
 
   const handleGenerationComplete = async () => {
     setIsUpdating(false);
@@ -100,14 +103,14 @@ export default function Page({ params }: { params: Promise<Params> }) {
   };
 
   const handleFileOpen = (path: string) => {
-    if(files.find((f) => f.path.includes(path))) {
+    if (files.find((f) => f.path.includes(path))) {
       setActiveTab("code");
       setSelectedFile(files.find((f) => f.path.includes(path))!.path);
       return;
     } else {
       console.error("File not found");
     }
-  }
+  };
 
   return (
     <div className="h-screen flex overflow-hidden bg-zinc-950 text-zinc-100 font-sans">
@@ -162,7 +165,11 @@ export default function Page({ params }: { params: Promise<Params> }) {
                   </div>
                 </div>
                 <div className="absolute top-4 right-4 z-20">
-                  <a href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${id}/download`} target="_blank" className="px-4 py-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 data-[state=on]:bg-zinc-800 data-[state=on]:text-green-400 transition-all flex items-center gap-2 justify-end">
+                  <a
+                    href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${id}/download`}
+                    target="_blank"
+                    className="px-4 py-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 data-[state=on]:bg-zinc-800 data-[state=on]:text-green-400 transition-all flex items-center gap-2 justify-end"
+                  >
                     <Download className="w-4 h-4" />
                     <span className="text-xs font-medium">Download</span>
                   </a>
@@ -176,13 +183,15 @@ export default function Page({ params }: { params: Promise<Params> }) {
               </div>
             )}
 
-            {isUpdating && status === 'ready' && (
-               <div className="absolute inset-0 z-40 bg-zinc-950/50 backdrop-blur-[2px] flex items-center justify-center transition-all duration-300">
-                  <div className="bg-zinc-900 border border-zinc-800 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
-                      <Loader2 className="w-5 h-5 text-green-500 animate-spin" />
-                      <span className="text-sm font-medium text-zinc-200">Updating application...</span>
-                  </div>
-               </div>
+            {isUpdating && status === "ready" && (
+              <div className="absolute inset-0 z-40 bg-zinc-950/50 backdrop-blur-[2px] flex items-center justify-center transition-all duration-300">
+                <div className="bg-zinc-900 border border-zinc-800 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
+                  <Loader2 className="w-5 h-5 text-green-500 animate-spin" />
+                  <span className="text-sm font-medium text-zinc-200">
+                    Updating application...
+                  </span>
+                </div>
+              </div>
             )}
 
             <div className="h-full w-full">

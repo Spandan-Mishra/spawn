@@ -19,7 +19,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-
 app.post("/project", async (req, res) => {
   const { prompt, userId } = req.body;
 
@@ -66,8 +65,11 @@ app.post("/project/:projectId/heartbeat", async (req, res) => {
   const { projectId } = req.params;
 
   try {
-    const project = await db.select().from(projects).where(eq(projects.id, projectId)).then(r => r[0]);
-
+    const project = await db
+      .select()
+      .from(projects)
+      .where(eq(projects.id, projectId))
+      .then((r) => r[0]);
 
     if (!project || !project.sandboxId) {
       throw new Error("SandboxId doesn't exist");
@@ -81,7 +83,7 @@ app.post("/project/:projectId/heartbeat", async (req, res) => {
     const newUrl = await createSandbox({ projectId });
     res.json(newUrl);
   }
-})
+});
 
 app.get("/project/:projectId/files", async (req, res) => {
   const { projectId } = req.params;
@@ -101,13 +103,17 @@ app.get("/project/:projectId/messages", async (req, res) => {
   const { projectId } = req.params;
 
   try {
-    const history = await db.select().from(messages).where(eq(messages.projectId, projectId)).orderBy(asc(messages.createdAt));
+    const history = await db
+      .select()
+      .from(messages)
+      .where(eq(messages.projectId, projectId))
+      .orderBy(asc(messages.createdAt));
 
     res.json(history);
   } catch (error) {
     res.status(400).json(error);
   }
-})
+});
 
 app.post("/project/:projectId/chat", async (req, res) => {
   const { projectId } = req.params;
@@ -207,13 +213,16 @@ app.post("/project/:projectId/chat", async (req, res) => {
 app.get("/project/:projectId/download", async (req, res) => {
   const { projectId } = req.params;
 
-  const filesToDownload = await db.select().from(files).where(eq(files.projectId, projectId));
+  const filesToDownload = await db
+    .select()
+    .from(files)
+    .where(eq(files.projectId, projectId));
 
   const zip = new AdmZip();
 
-  filesToDownload.forEach(file => {
+  filesToDownload.forEach((file) => {
     zip.addFile(file.path, file.content);
-  })
+  });
 
   const buffer = zip.toBuffer();
 
@@ -222,7 +231,7 @@ app.get("/project/:projectId/download", async (req, res) => {
   res.setHeader("Content-Length", buffer.length);
 
   res.json(buffer);
-})
+});
 
 app.listen(3001, () => {
   console.log("Spawn Backend started on port 3001");

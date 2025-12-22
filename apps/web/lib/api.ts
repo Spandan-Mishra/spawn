@@ -64,14 +64,25 @@ const streamChat = async (projectId: string, payload: string) => {
   return response;
 };
 
-const heartbeat = async({ projectId }: { projectId: string }) => {
-  const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${projectId}/heartbeat`);
+const heartbeat = async ({ projectId }: { projectId: string }) => {
+  const response = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${projectId}/heartbeat`,
+  );
   return response.data;
-}
+};
 
-const loadHistory = async({ projectId }: { projectId: string }) => {
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${projectId}/messages`);
+const loadHistory = async ({ projectId }: { projectId: string }) => {
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/project/${projectId}/messages`,
+  );
   return response.data;
-}
+};
 
-export { getFiles, startSandbox, createProject, streamChat, heartbeat, loadHistory };
+export {
+  getFiles,
+  startSandbox,
+  createProject,
+  streamChat,
+  heartbeat,
+  loadHistory,
+};

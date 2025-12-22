@@ -96,45 +96,57 @@ export const getOnChainTools = async ({ projectId }: { projectId: string }) => {
       },
     ),
     tool(
-        async ({ query, type }: { query: string; type: "general" | "image" }) => {
-            const exa = new Exa(process.env.EXA_API_KEY);
+      async ({ query, type }: { query: string; type: "general" | "image" }) => {
+        const exa = new Exa(process.env.EXA_API_KEY);
 
-            const options: any = {
-                useAutoprompt: true,
-                numResults: 3,
-                type: "neural",
-            };
+        const options: any = {
+          useAutoprompt: true,
+          numResults: 3,
+          type: "neural",
+        };
 
-            if (type === "general") {
-                options.contents = { text: true };
-            } 
-
-            try {
-                const response = await exa.search(query, options);
-
-                const formattedResults = response.results.map((result: any) => {
-                    if (type === "image") {
-                        return `Title: ${result.title}\nImage URL: ${result.image || "No image found"}\nSource: ${result.url}`;
-                    } else {
-                        const summary = result.text ? result.text.slice(0, 300) : "No content available";
-                        return `Title: ${result.title}\nURL: ${result.url}\nContent: ${summary}...`;
-                    }
-                }).join("\n\n---\n\n");
-
-                return formattedResults + "\n\n(SYSTEM NOTE: Now that you have this information, you MUST use 'write_file' to update the application code. Do not just report these findings.)";
-            } catch (error) {
-                console.error("Exa Search Error:", error);
-                return "Error performing web search. Please rely on your internal knowledge.";
-            }
-        },
-        {
-            name: "search_web",
-            description: "Search the web for real-time information or images. Use type='general' for facts/research, and type='image' to find image URLs for the website.",
-            schema: z.object({
-                query: z.string().describe("The natural language search query"),
-                type: z.enum(["general", "image"]).describe("The type of search: 'general' for text/facts, 'image' for visual assets"),
-            }),
+        if (type === "general") {
+          options.contents = { text: true };
         }
-    )
+
+        try {
+          const response = await exa.search(query, options);
+
+          const formattedResults = response.results
+            .map((result: any) => {
+              if (type === "image") {
+                return `Title: ${result.title}\nImage URL: ${result.image || "No image found"}\nSource: ${result.url}`;
+              } else {
+                const summary = result.text
+                  ? result.text.slice(0, 300)
+                  : "No content available";
+                return `Title: ${result.title}\nURL: ${result.url}\nContent: ${summary}...`;
+              }
+            })
+            .join("\n\n---\n\n");
+
+          return (
+            formattedResults +
+            "\n\n(SYSTEM NOTE: Now that you have this information, you MUST use 'write_file' to update the application code. Do not just report these findings.)"
+          );
+        } catch (error) {
+          console.error("Exa Search Error:", error);
+          return "Error performing web search. Please rely on your internal knowledge.";
+        }
+      },
+      {
+        name: "search_web",
+        description:
+          "Search the web for real-time information or images. Use type='general' for facts/research, and type='image' to find image URLs for the website.",
+        schema: z.object({
+          query: z.string().describe("The natural language search query"),
+          type: z
+            .enum(["general", "image"])
+            .describe(
+              "The type of search: 'general' for text/facts, 'image' for visual assets",
+            ),
+        }),
+      },
+    ),
   ];
 };
