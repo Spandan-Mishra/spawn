@@ -214,7 +214,7 @@ export default function LandingPage() {
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="w-full caret-transparent bg-transparent text-white p-4 resize-none outline-none min-h-[100px]"
+              className="w-full caret-transparent bg-transparent text-white p-4 resize-none outline-none min-h-[100px] scrollbar-track-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
