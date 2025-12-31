@@ -2,7 +2,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { GPTOSSF, QwenCoder3, GPT4oMini, Sonnet45 } from "./choices";
 
 export const model = new ChatOpenAI({
-  model: GPT4oMini,
+  model: Sonnet45,
   apiKey: process.env.OPENROUTER_API_KEY!,
   temperature: 0,
   maxTokens: 8000,
