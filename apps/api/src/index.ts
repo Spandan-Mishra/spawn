@@ -221,7 +221,7 @@ app.get("/project/:projectId/download", async (req, res) => {
   const zip = new AdmZip();
 
   filesToDownload.forEach((file) => {
-    zip.addFile(file.path, file.content);
+    zip.addFile(file.path, Buffer.from(file.content));
   });
 
   const buffer = zip.toBuffer();
