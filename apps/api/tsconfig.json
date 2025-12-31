@@ -3,8 +3,12 @@
     "compilerOptions": {
         "outDir": "./dist",
         "rootDir": "./src",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "module": "esnext",
+        "noImplicitAny": false,
+        "strict": false,    
+        "esModuleInterop": true,
+        "skipLibCheck": true
     },
     "include": ["src/**/*.ts"],
     "exclude": ["node_modules", "dist"]
