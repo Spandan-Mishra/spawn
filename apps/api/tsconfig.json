@@ -3,12 +3,13 @@
     "compilerOptions": {
         "outDir": "./dist",
         "rootDir": "./src",
-        "moduleResolution": "bundler",
-        "module": "esnext",
+        "moduleResolution": "node",
+        "module": "commonjs",
         "noImplicitAny": false,
         "strict": false,    
         "esModuleInterop": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "resolveJsonModule": true
     },
     "include": ["src/**/*.ts"],
     "exclude": ["node_modules", "dist"]
