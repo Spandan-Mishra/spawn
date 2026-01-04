@@ -19,6 +19,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const PORT = process.env.PORT || 3001;
+
 app.post("/project", async (req, res) => {
   const { prompt, userId } = req.body;
 
@@ -233,6 +235,6 @@ app.get("/project/:projectId/download", async (req, res) => {
   res.json(buffer);
 });
 
-app.listen(3001, () => {
-  console.log("Spawn Backend started on port 3001");
+app.listen(PORT, () => {
+  console.log(`Spawn Backend started on port ${PORT}`);
 });
