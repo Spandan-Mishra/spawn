@@ -66,7 +66,7 @@ app.post("/project/:projectId/startSandbox", async (req, res) => {
 
 app.post("/project/:projectId/heartbeat", async (req, res) => {
   const { projectId } = req.params;
-  
+
   try {
     const project = await db
       .select()

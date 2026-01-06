@@ -8,7 +8,7 @@ export default defineConfig({
   clean: true,
   bundle: true,
   noExternal: ["@repo/db"],
-  skipNodeModulesBundle: true, 
+  skipNodeModulesBundle: true,
   sourcemap: false,
-  dts: false,  
+  dts: false,
 });

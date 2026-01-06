@@ -41,7 +41,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
 
         if (filesData.length > 0) {
           setStatus("booting");
-          
+
           try {
             const url = await startSandbox({ projectId: id });
             setSandboxUrl(url);
@@ -49,7 +49,7 @@ export default function Page({ params }: { params: Promise<Params> }) {
           } catch (e) {
             console.error("Error booting sandbox for existing project", e);
           }
-        } 
+        }
       } catch (error) {
         console.error("Failed to load the project:", error);
       }
