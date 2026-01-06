@@ -1,16 +1,18 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { GPTOSSF, QwenCoder3, GPT4oMini, Sonnet45 } from "./choices";
 
-export const model = new ChatOpenAI({
-  model: Sonnet45,
-  apiKey: process.env.OPENROUTER_API_KEY!,
-  temperature: 0,
-  maxTokens: 8000,
-  configuration: {
-    baseURL: "https://openrouter.ai/api/v1",
-    defaultHeaders: {
-      "HTTP-Referer": "https://spawn.app",
-      "X-Title": "Spawn",
+export const getModel = (modelName: string) => {
+  return new ChatOpenAI({
+    modelName: modelName,
+    apiKey: process.env.OPENROUTER_API_KEY!,
+    temperature: 0.1,
+    maxTokens: 8000,
+    configuration: {
+      baseURL: "https://openrouter.ai/api/v1",
+      defaultHeaders: {
+        "HTTP-Referer": "https://spawn.app",
+        "X-Title": "Spawn",
+      },
     },
-  },
-});
+  });
+};

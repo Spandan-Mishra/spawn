@@ -11,7 +11,7 @@ import {
 } from "@langchain/core/messages";
 import { SYSTEM_PROMPT } from "./ai/prompt";
 import createAgentGraph from "./ai/graph";
-import { model } from "./ai/model";
+import { getModel, model } from "./ai/model";
 import Sandbox from "@e2b/code-interpreter";
 import AdmZip from "adm-zip";
 
@@ -22,7 +22,7 @@ app.use(cors());
 const PORT = process.env.PORT || 3001;
 
 app.post("/project", async (req, res) => {
-  const { prompt, userId } = req.body;
+  const { prompt, userId, model } = req.body;
 
   await db.transaction(async (tx) => {
     const [project] = await tx
@@ -30,6 +30,7 @@ app.post("/project", async (req, res) => {
       .values({
         userId,
         description: prompt,
+        model: model || "openai/gpt-4o-mini",
       })
       .returning();
 
@@ -132,6 +133,8 @@ app.post("/project/:projectId/chat", async (req, res) => {
       .from(projects)
       .where(eq(projects.id, projectId))
       .then((r) => r[0]);
+
+    const model = getModel(project.model || "openai/gpt-4o-mini");
 
     const fileStructure = await db
       .select({ path: files.path })

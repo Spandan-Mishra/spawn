@@ -17,6 +17,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { authClient } from "@/lib/auth-client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const models = [
+  { id: "qwen/qwen3-coder", name: "QwenCoder 3" },
+  { id: "openai/gpt-4o-mini", name: "GPT-4o Mini" },
+  { id: "anthropic/claude-sonnet-4.5", name: "Sonnet 4.5" },
+]
 
 const placeholderPrompts = [
   "Build a solitaire game with a green background...",
@@ -54,6 +61,7 @@ const itemVariants: Variants = {
 export default function LandingPage() {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedModel, setSelectedModel] = useState(models[0]?.id);
   const [showDialog, setShowDialog] = useState(false);
   const { data: session } = authClient.useSession();
   const router = useRouter();
@@ -74,6 +82,7 @@ export default function LandingPage() {
         {
           prompt: prompt,
           userId: session?.user?.id,
+          model: selectedModel,
         },
       );
 
@@ -197,32 +206,50 @@ export default function LandingPage() {
         <motion.div variants={itemVariants} className="relative group">
           <div className="absolute -inset-1 bg-linear-to-r from-white to-green-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-200"></div>
           <div className="relative bg-zinc-900 rounded-lg p-2 border border-zinc-800 flex items-center shadow-2xl">
-            {!prompt && (
-              <div className="absolute top-0 left-0 p-4 w-full h-full pointer-events-none text-zinc-500">
-                <TypingAnimation
-                  className="text-muted-foreground absolute -top-1 left-6"
-                  words={placeholderPrompts}
-                  typeSpeed={20}
-                  deleteSpeed={10}
-                  pauseDelay={1500}
-                  loop
-                  startOnView={false}
-                />
-              </div>
-            )}
+            
+            <div className="flex justify-end px-2">
+                <Select value={selectedModel} onValueChange={setSelectedModel}>
+                    <SelectTrigger className="w-[180px] h-8 bg-zinc-800/50 border-zinc-700 text-zinc-300 text-xs rounded-full focus:ring-0 focus:ring-offset-0">
+                        <SelectValue placeholder="Select Model" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-300">
+                        {models.map(m => (
+                            <SelectItem key={m.id} value={m.id} className="focus:bg-zinc-800 focus:text-white">
+                                {m.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+            
+            <div className="relative w-full">
+              {!prompt && (
+                <div className="absolute top-0 left-0 p-4 w-full h-full pointer-events-none text-zinc-500">
+                  <TypingAnimation
+                    className="text-muted-foreground absolute -top-1 left-6"
+                    words={placeholderPrompts}
+                    typeSpeed={20}
+                    deleteSpeed={10}
+                    pauseDelay={1500}
+                    loop
+                    startOnView={false}
+                  />
+                </div>
+              )}
 
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="w-full caret-transparent bg-transparent text-white p-4 resize-none outline-none min-h-[100px] scrollbar-track-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSpawn();
-                }
-              }}
-            />
-          </div>
+              <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                className="w-full caret-transparent bg-transparent text-white p-4 resize-none outline-none min-h-[100px] scrollbar-track-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSpawn();
+                  }
+                }}
+              />
+            </div>
+          </div>            
         </motion.div>
 
         <motion.div variants={itemVariants}>

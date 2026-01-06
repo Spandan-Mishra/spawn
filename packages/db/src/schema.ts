@@ -71,6 +71,7 @@ export const projects = pgTable("projects", {
   userId: text("user_id")
     .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
+  model: text("model").notNull().default("openai/gpt-4o-mini"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
