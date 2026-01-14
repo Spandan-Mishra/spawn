@@ -29,6 +29,7 @@ const models = [
   { id: "qwen/qwen3-coder", name: "QwenCoder 3" },
   { id: "openai/gpt-4o-mini", name: "GPT-4o Mini" },
   { id: "anthropic/claude-sonnet-4.5", name: "Sonnet 4.5" },
+  { id: "openai/gpt-oss-20b:free", name: "GPT-OSS F" },
 ];
 
 const placeholderPrompts = [
@@ -212,26 +213,7 @@ export default function LandingPage() {
         <motion.div variants={itemVariants} className="relative group">
           <div className="absolute -inset-1 bg-linear-to-r from-white to-green-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-200"></div>
           <div className="relative bg-zinc-900 rounded-lg p-2 border border-zinc-800 flex items-center shadow-2xl">
-            <div className="flex justify-end px-2">
-              <Select value={selectedModel} onValueChange={setSelectedModel}>
-                <SelectTrigger className="w-[180px] h-8 bg-zinc-800/50 border-zinc-700 text-zinc-300 text-xs rounded-full focus:ring-0 focus:ring-offset-0">
-                  <SelectValue placeholder="Select Model" />
-                </SelectTrigger>
-                <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-300">
-                  {models.map((m) => (
-                    <SelectItem
-                      key={m.id}
-                      value={m.id}
-                      className="focus:bg-zinc-800 focus:text-white"
-                    >
-                      {m.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="relative w-full">
+            <div className="relative w-full mb-10">
               {!prompt && (
                 <div className="absolute top-0 left-0 p-4 w-full h-full pointer-events-none text-zinc-500">
                   <TypingAnimation
@@ -257,6 +239,25 @@ export default function LandingPage() {
                   }
                 }}
               />
+            </div>
+
+            <div className="absolute bottom-0 left-4 my-4">
+              <Select value={selectedModel} onValueChange={setSelectedModel}>
+                <SelectTrigger className="w-[180px] h-8 bg-zinc-800/50 border-zinc-700 text-zinc-300 text-xs rounded-full focus:ring-0 focus:ring-offset-0">
+                  <SelectValue placeholder="Select Model" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-300">
+                  {models.map((m) => (
+                    <SelectItem
+                      key={m.id}
+                      value={m.id}
+                      className="focus:bg-zinc-800 focus:text-white"
+                    >
+                      {m.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </motion.div>

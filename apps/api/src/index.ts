@@ -11,7 +11,7 @@ import {
 } from "@langchain/core/messages";
 import { SYSTEM_PROMPT } from "./ai/prompt";
 import createAgentGraph from "./ai/graph";
-import { getModel, model } from "./ai/model";
+import { getModel } from "./ai/model";
 import Sandbox from "@e2b/code-interpreter";
 import AdmZip from "adm-zip";
 
