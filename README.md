@@ -18,27 +18,28 @@ It features a robust **ReAct Agent architecture** capable of researching the web
 The following flowchart demonstrates how data flows between the User, the AI Agent, the Database, and the Sandboxed Environment.
 
 ```mermaid
-graph TD
-    User[User / Frontend] -->|1. Prompt| API[Backend API Express]
+flowchart TD
+    User["User / Frontend"] -->|1. Prompt| API["Backend API Express"]
     
-    subgraph "AI Orchestration Layer"
-        API -->|2. Stream Request| Agent[LangGraph Agent]
-        Agent <-->|3. Loop| Model[LLM OpenRouter]
-        Agent -->|4. Tool Call| Tools[Tool Manager]
+    subgraph AI_Orchestration ["AI Orchestration Layer"]
+        API -->|2. Stream Request| Agent["LangGraph Agent"]
+        Agent <-->|3. Loop| Model["LLM OpenRouter"]
+        Agent -->|4. Tool Call| Tools["Tool Manager"]
     end
     
-    subgraph "Data & Context"
-        Tools -->|Read/Write Files| DB[(PostgreSQL)]
-        Tools -->|Web Search| Exa[Exa.ai API]
+    subgraph Data_Context ["Data & Context"]
+        Tools -->|Read/Write Files| DB[("(PostgreSQL)")]
+        Tools -->|Web Search| Exa["Exa.ai API"]
     end
     
-    subgraph "Infrastructure Layer"
-        Tools -->|5. Sync Files & Run| E2B[E2B Sandbox MicroVM]
-        E2B -->|6. Host Port 5173| Preview[Live Preview URL]
+    subgraph Infrastructure ["Infrastructure Layer"]
+        Tools -->|5. Sync Files & Run| E2B["E2B Sandbox MicroVM"]
+        E2B -->|6. Host Port 5173| Preview["Live Preview URL"]
     end
     
     API -.->|7. Stream Tokens SSE| User
     Preview -.->|8. Iframe Render| User
+
 ```
 
 ## Technologies Used
